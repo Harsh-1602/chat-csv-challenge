@@ -1,0 +1,291 @@
+{
+  "tables": {
+    "customer": {
+      "primary_key": [
+        "c_custkey"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "c_custkey": "measure",
+        "c_name": "text",
+        "c_address": "text",
+        "c_nationkey": "measure",
+        "c_phone": "text",
+        "c_acctbal": "measure",
+        "c_mktsegment": "dimension",
+        "c_comment": "text"
+      },
+      "units": {
+        "c_custkey": null,
+        "c_name": null,
+        "c_address": null,
+        "c_nationkey": null,
+        "c_phone": null,
+        "c_acctbal": null,
+        "c_mktsegment": null,
+        "c_comment": null
+      }
+    },
+    "lineitem": {
+      "primary_key": [
+        "l_orderkey",
+        "l_linenumber"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "l_orderkey": "measure",
+        "l_partkey": "measure",
+        "l_suppkey": "measure",
+        "l_linenumber": "measure",
+        "l_quantity": "measure",
+        "l_extendedprice": "measure",
+        "l_discount": "measure",
+        "l_tax": "measure",
+        "l_returnflag": "dimension",
+        "l_linestatus": "dimension",
+        "l_shipdate": "time",
+        "l_commitdate": "time",
+        "l_receiptdate": "time",
+        "l_shipinstruct": "dimension",
+        "l_shipmode": "dimension",
+        "l_comment": "text"
+      },
+      "units": {
+        "l_orderkey": null,
+        "l_partkey": null,
+        "l_suppkey": null,
+        "l_linenumber": null,
+        "l_quantity": null,
+        "l_extendedprice": null,
+        "l_discount": null,
+        "l_tax": null,
+        "l_returnflag": null,
+        "l_linestatus": null,
+        "l_shipdate": null,
+        "l_commitdate": null,
+        "l_receiptdate": null,
+        "l_shipinstruct": null,
+        "l_shipmode": null,
+        "l_comment": null
+      }
+    },
+    "nation": {
+      "primary_key": [
+        "n_nationkey"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "n_nationkey": "measure",
+        "n_name": "text",
+        "n_regionkey": "measure",
+        "n_comment": "text"
+      },
+      "units": {
+        "n_nationkey": null,
+        "n_name": null,
+        "n_regionkey": null,
+        "n_comment": null
+      }
+    },
+    "orders": {
+      "primary_key": [
+        "o_orderkey"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "o_orderkey": "measure",
+        "o_custkey": "measure",
+        "o_orderstatus": "dimension",
+        "o_totalprice": "measure",
+        "o_orderdate": "time",
+        "o_orderpriority": "dimension",
+        "o_clerk": "text",
+        "o_shippriority": "measure",
+        "o_comment": "text"
+      },
+      "units": {
+        "o_orderkey": null,
+        "o_custkey": null,
+        "o_orderstatus": null,
+        "o_totalprice": null,
+        "o_orderdate": null,
+        "o_orderpriority": null,
+        "o_clerk": null,
+        "o_shippriority": null,
+        "o_comment": null
+      }
+    },
+    "part": {
+      "primary_key": [
+        "p_partkey"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "p_partkey": "measure",
+        "p_name": "text",
+        "p_mfgr": "dimension",
+        "p_brand": "dimension",
+        "p_type": "text",
+        "p_size": "measure",
+        "p_container": "dimension",
+        "p_retailprice": "measure",
+        "p_comment": "text"
+      },
+      "units": {
+        "p_partkey": null,
+        "p_name": null,
+        "p_mfgr": null,
+        "p_brand": null,
+        "p_type": null,
+        "p_size": null,
+        "p_container": null,
+        "p_retailprice": null,
+        "p_comment": null
+      }
+    },
+    "partsupp": {
+      "primary_key": [
+        "ps_partkey",
+        "ps_suppkey"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "ps_partkey": "measure",
+        "ps_suppkey": "measure",
+        "ps_availqty": "measure",
+        "ps_supplycost": "measure",
+        "ps_comment": "text"
+      },
+      "units": {
+        "ps_partkey": null,
+        "ps_suppkey": null,
+        "ps_availqty": null,
+        "ps_supplycost": null,
+        "ps_comment": null
+      }
+    },
+    "region": {
+      "primary_key": [
+        "r_regionkey"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "r_regionkey": "measure",
+        "r_name": "text",
+        "r_comment": "text"
+      },
+      "units": {
+        "r_regionkey": null,
+        "r_name": null,
+        "r_comment": null
+      }
+    },
+    "supplier": {
+      "primary_key": [
+        "s_suppkey"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "s_suppkey": "measure",
+        "s_name": "text",
+        "s_address": "text",
+        "s_nationkey": "measure",
+        "s_phone": "text",
+        "s_acctbal": "measure",
+        "s_comment": "text"
+      },
+      "units": {
+        "s_suppkey": null,
+        "s_name": null,
+        "s_address": null,
+        "s_nationkey": null,
+        "s_phone": null,
+        "s_acctbal": null,
+        "s_comment": null
+      }
+    }
+  },
+  "relationships": [
+    {
+      "from": "customer.c_nationkey",
+      "to": "nation.n_nationkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "lineitem.l_orderkey",
+      "to": "orders.o_orderkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "lineitem.l_partkey",
+      "to": "part.p_partkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "lineitem.l_suppkey",
+      "to": "supplier.s_suppkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "nation.n_regionkey",
+      "to": "region.r_regionkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "orders.o_custkey",
+      "to": "customer.c_custkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "partsupp.ps_partkey",
+      "to": "part.p_partkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "partsupp.ps_suppkey",
+      "to": "supplier.s_suppkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "supplier.s_nationkey",
+      "to": "nation.n_nationkey",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    }
+  ],
+  "semantic_model": null,
+  "analysis": {
+    "llm_enabled": false,
+    "model": null,
+    "reasoning_effort": null,
+    "degraded": false,
+    "notes": [],
+    "llm_calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "timings_s": {
+      "load_and_statistics": 1.39,
+      "understanding": 0.02,
+      "candidates": 0.07,
+      "relationship_review": 0.01,
+      "semantic_model": 0.0
+    }
+  }
+}

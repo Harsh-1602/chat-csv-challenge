@@ -1,0 +1,75 @@
+{
+  "_comment": "Hand-labelled profiling ground truth. Relationships are read from eval/questions/<dataset>.json. Roles: identifier | measure | time; every other labelled column is 'descriptive'. Columns listed in 'ambiguous' are not scored.",
+  "jaffle_shop": {
+    "primary_keys": {
+      "raw_customers": ["id"],
+      "raw_orders": ["id"],
+      "raw_payments": ["id"]
+    },
+    "roles": {
+      "identifier": ["raw_customers.id", "raw_orders.id", "raw_orders.user_id", "raw_payments.id", "raw_payments.order_id"],
+      "measure": ["raw_payments.amount"],
+      "time": ["raw_orders.order_date"]
+    },
+    "ambiguous": [],
+    "units": {"raw_payments.amount": "cents"}
+  },
+  "chinook": {
+    "primary_keys": {
+      "album": ["AlbumId"],
+      "artist": ["ArtistId"],
+      "customer": ["CustomerId"],
+      "employee": ["EmployeeId"],
+      "genre": ["GenreId"],
+      "invoice": ["InvoiceId"],
+      "invoiceline": ["InvoiceLineId"],
+      "mediatype": ["MediaTypeId"],
+      "playlist": ["PlaylistId"],
+      "playlisttrack": ["PlaylistId", "TrackId"],
+      "track": ["TrackId"]
+    },
+    "roles": {
+      "identifier": [
+        "album.AlbumId", "album.ArtistId", "artist.ArtistId", "customer.CustomerId", "customer.SupportRepId",
+        "employee.EmployeeId", "employee.ReportsTo", "genre.GenreId", "invoice.InvoiceId", "invoice.CustomerId",
+        "invoiceline.InvoiceLineId", "invoiceline.InvoiceId", "invoiceline.TrackId", "mediatype.MediaTypeId",
+        "playlist.PlaylistId", "playlisttrack.PlaylistId", "playlisttrack.TrackId", "track.TrackId",
+        "track.AlbumId", "track.MediaTypeId", "track.GenreId"
+      ],
+      "measure": [
+        "track.Milliseconds", "track.Bytes", "track.UnitPrice", "invoice.Total",
+        "invoiceline.UnitPrice", "invoiceline.Quantity"
+      ],
+      "time": ["employee.BirthDate", "employee.HireDate", "invoice.InvoiceDate"]
+    },
+    "ambiguous": [],
+    "units": {}
+  },
+  "tpch": {
+    "primary_keys": {
+      "region": ["r_regionkey"],
+      "nation": ["n_nationkey"],
+      "supplier": ["s_suppkey"],
+      "customer": ["c_custkey"],
+      "part": ["p_partkey"],
+      "orders": ["o_orderkey"],
+      "partsupp": ["ps_partkey", "ps_suppkey"],
+      "lineitem": ["l_orderkey", "l_linenumber"]
+    },
+    "roles": {
+      "identifier": [
+        "region.r_regionkey", "nation.n_nationkey", "nation.n_regionkey", "supplier.s_suppkey", "supplier.s_nationkey",
+        "customer.c_custkey", "customer.c_nationkey", "part.p_partkey", "orders.o_orderkey", "orders.o_custkey",
+        "partsupp.ps_partkey", "partsupp.ps_suppkey", "lineitem.l_orderkey", "lineitem.l_partkey", "lineitem.l_suppkey"
+      ],
+      "measure": [
+        "part.p_retailprice", "supplier.s_acctbal", "customer.c_acctbal", "partsupp.ps_availqty",
+        "partsupp.ps_supplycost", "orders.o_totalprice", "lineitem.l_quantity", "lineitem.l_extendedprice",
+        "lineitem.l_discount", "lineitem.l_tax"
+      ],
+      "time": ["orders.o_orderdate", "lineitem.l_shipdate", "lineitem.l_commitdate", "lineitem.l_receiptdate"]
+    },
+    "ambiguous": ["part.p_size", "orders.o_shippriority", "lineitem.l_linenumber"],
+    "units": {}
+  }
+}

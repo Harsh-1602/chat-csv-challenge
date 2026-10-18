@@ -1,0 +1,430 @@
+{
+  "dataset": "jaffle_shop",
+  "description": "dbt Labs demo shop: customers, orders and payments (3 CSVs, ~300 rows).",
+  "source": "https://github.com/dbt-labs/jaffle_shop/tree/main/seeds",
+  "license": "Apache-2.0",
+  "tables": {
+    "raw_customers": 100,
+    "raw_orders": 99,
+    "raw_payments": 113
+  },
+  "total_rows": 312,
+  "relationship_detection": {
+    "expected": 2,
+    "detected": 6,
+    "correct": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "missed": [
+      "raw_orders.user_id -> raw_customers.id",
+      "raw_payments.order_id -> raw_orders.id"
+    ],
+    "false_positives": [
+      "raw_customers.id -> raw_orders.id",
+      "raw_customers.id -> raw_payments.id",
+      "raw_orders.id -> raw_customers.id",
+      "raw_orders.id -> raw_payments.id",
+      "raw_payments.id -> raw_customers.id",
+      "raw_payments.id -> raw_orders.id"
+    ]
+  },
+  "questions": [
+    {
+      "id": "js-01",
+      "question": "How many customers do we have?",
+      "category": "aggregation",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS customers FROM raw_customers",
+      "expected": {
+        "columns": [
+          "customers"
+        ],
+        "rows": [
+          [
+            100
+          ]
+        ],
+        "row_count": 1
+      }
+    },
+    {
+      "id": "js-02",
+      "question": "How many orders are there in each status?",
+      "category": "aggregation",
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "status",
+        "y": "orders"
+      },
+      "gold_sql": "SELECT status, count(*) AS orders FROM raw_orders GROUP BY status ORDER BY orders DESC, status",
+      "order_matters": true,
+      "expected": {
+        "columns": [
+          "status",
+          "orders"
+        ],
+        "rows": [
+          [
+            "completed",
+            67
+          ],
+          [
+            "placed",
+            13
+          ],
+          [
+            "shipped",
+            13
+          ],
+          [
+            "returned",
+            4
+          ],
+          [
+            "return_pending",
+            2
+          ]
+        ],
+        "row_count": 5
+      }
+    },
+    {
+      "id": "js-03",
+      "question": "What is the total amount paid in dollars, by payment method?",
+      "category": "aggregation",
+      "expected_type": "table",
+      "gold_sql": "SELECT payment_method, sum(amount) / 100.0 AS total_dollars FROM raw_payments GROUP BY payment_method ORDER BY total_dollars DESC",
+      "order_matters": true,
+      "notes": "Unit trap: amount is in cents and must be divided by 100.",
+      "expected": {
+        "columns": [
+          "payment_method",
+          "total_dollars"
+        ],
+        "rows": [
+          [
+            "credit_card",
+            871.0
+          ],
+          [
+            "bank_transfer",
+            411.0
+          ],
+          [
+            "gift_card",
+            205.0
+          ],
+          [
+            "coupon",
+            185.0
+          ]
+        ],
+        "row_count": 4
+      }
+    },
+    {
+      "id": "js-04",
+      "question": "Who are the top 5 customers by total amount paid?",
+      "category": "multi-hop join + ranking",
+      "expected_type": "table",
+      "gold_sql": "SELECT c.id, c.first_name, c.last_name, sum(p.amount) / 100.0 AS total_paid FROM raw_customers c JOIN raw_orders o ON o.user_id = c.id JOIN raw_payments p ON p.order_id = o.id GROUP BY ALL ORDER BY total_paid DESC, c.id LIMIT 5",
+      "order_matters": true,
+      "notes": "Requires joins through non-obvious keys (user_id, order_id).",
+      "expected": {
+        "columns": [
+          "id",
+          "first_name",
+          "last_name",
+          "total_paid"
+        ],
+        "rows": [
+          [
+            51,
+            "Howard",
+            "R.",
+            99.0
+          ],
+          [
+            3,
+            "Kathleen",
+            "P.",
+            65.0
+          ],
+          [
+            46,
+            "Norma",
+            "C.",
+            64.0
+          ],
+          [
+            30,
+            "Christina",
+            "W.",
+            57.0
+          ],
+          [
+            54,
+            "Rose",
+            "M.",
+            57.0
+          ]
+        ],
+        "row_count": 5
+      }
+    },
+    {
+      "id": "js-05",
+      "question": "Show the number of orders per week.",
+      "category": "time series",
+      "expected_type": "chart",
+      "chart": {
+        "type": "line",
+        "x": "week",
+        "y": "orders"
+      },
+      "gold_sql": "SELECT date_trunc('week', order_date) AS week, count(*) AS orders FROM raw_orders GROUP BY week ORDER BY week",
+      "order_matters": true,
+      "expected": {
+        "columns": [
+          "week",
+          "orders"
+        ],
+        "rows": [
+          [
+            "2018-01-01T00:00:00",
+            6
+          ],
+          [
+            "2018-01-08T00:00:00",
+            5
+          ],
+          [
+            "2018-01-15T00:00:00",
+            7
+          ],
+          [
+            "2018-01-22T00:00:00",
+            8
+          ],
+          [
+            "2018-01-29T00:00:00",
+            7
+          ],
+          [
+            "2018-02-05T00:00:00",
+            6
+          ],
+          [
+            "2018-02-12T00:00:00",
+            6
+          ],
+          [
+            "2018-02-19T00:00:00",
+            7
+          ],
+          [
+            "2018-02-26T00:00:00",
+            9
+          ],
+          [
+            "2018-03-05T00:00:00",
+            8
+          ],
+          [
+            "2018-03-12T00:00:00",
+            6
+          ],
+          [
+            "2018-03-19T00:00:00",
+            8
+          ],
+          [
+            "2018-03-26T00:00:00",
+            8
+          ],
+          [
+            "2018-04-02T00:00:00",
+            7
+          ],
+          [
+            "2018-04-09T00:00:00",
+            1
+          ]
+        ],
+        "row_count": 15
+      }
+    },
+    {
+      "id": "js-06",
+      "question": "How many customers have never placed an order?",
+      "category": "anti-join",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS customers_without_orders FROM raw_customers c WHERE NOT EXISTS (SELECT 1 FROM raw_orders o WHERE o.user_id = c.id)",
+      "expected": {
+        "columns": [
+          "customers_without_orders"
+        ],
+        "rows": [
+          [
+            38
+          ]
+        ],
+        "row_count": 1
+      }
+    },
+    {
+      "id": "js-07",
+      "question": "What is the average order value in dollars?",
+      "category": "join fan-out trap",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT avg(order_total) AS avg_order_value FROM (SELECT o.id, sum(p.amount) / 100.0 AS order_total FROM raw_orders o JOIN raw_payments p ON p.order_id = o.id GROUP BY o.id)",
+      "tolerance": 0.01,
+      "notes": "Payments must be summed per order before averaging; averaging payment rows gives the wrong answer. Orders with no payment are excluded.",
+      "expected": {
+        "columns": [
+          "avg_order_value"
+        ],
+        "rows": [
+          [
+            16.888889
+          ]
+        ],
+        "row_count": 1
+      }
+    },
+    {
+      "id": "js-08",
+      "question": "Which orders were paid with more than one payment method?",
+      "category": "group filter",
+      "expected_type": "table",
+      "gold_sql": "SELECT order_id, count(DISTINCT payment_method) AS methods FROM raw_payments GROUP BY order_id HAVING count(DISTINCT payment_method) > 1 ORDER BY order_id",
+      "order_matters": false,
+      "expected": {
+        "columns": [
+          "order_id",
+          "methods"
+        ],
+        "rows": [
+          [
+            9,
+            2
+          ],
+          [
+            13,
+            2
+          ],
+          [
+            25,
+            3
+          ],
+          [
+            54,
+            2
+          ],
+          [
+            58,
+            2
+          ],
+          [
+            67,
+            2
+          ],
+          [
+            77,
+            2
+          ],
+          [
+            87,
+            2
+          ],
+          [
+            92,
+            2
+          ]
+        ],
+        "row_count": 9
+      }
+    },
+    {
+      "id": "js-09",
+      "question": "What share of orders were returned or are pending return?",
+      "category": "ratio",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(100.0 * count(*) FILTER (WHERE status IN ('returned', 'return_pending')) / count(*), 2) AS returned_pct FROM raw_orders",
+      "tolerance": 0.01,
+      "expected": {
+        "columns": [
+          "returned_pct"
+        ],
+        "rows": [
+          [
+            6.06
+          ]
+        ],
+        "row_count": 1
+      }
+    },
+    {
+      "id": "js-10",
+      "question": "And how does that break down by month?",
+      "category": "follow-up",
+      "context": [
+        "js-09"
+      ],
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "month",
+        "y": "returned_pct"
+      },
+      "gold_sql": "SELECT date_trunc('month', order_date) AS month, round(100.0 * count(*) FILTER (WHERE status IN ('returned', 'return_pending')) / count(*), 2) AS returned_pct FROM raw_orders GROUP BY month ORDER BY month",
+      "order_matters": true,
+      "tolerance": 0.01,
+      "notes": "Must reuse the metric from the previous turn.",
+      "expected": {
+        "columns": [
+          "month",
+          "returned_pct"
+        ],
+        "rows": [
+          [
+            "2018-01-01T00:00:00",
+            17.24
+          ],
+          [
+            "2018-02-01T00:00:00",
+            3.7
+          ],
+          [
+            "2018-03-01T00:00:00",
+            0.0
+          ],
+          [
+            "2018-04-01T00:00:00",
+            0.0
+          ]
+        ],
+        "row_count": 4
+      }
+    },
+    {
+      "id": "js-11",
+      "question": "What was our revenue?",
+      "category": "ambiguity",
+      "expected_type": "clarification",
+      "gold_sql": null,
+      "notes": "Ambiguous: all payments vs. excluding returned orders, and over which period. Assistant should ask or state its assumption.",
+      "expected": null
+    },
+    {
+      "id": "js-12",
+      "question": "What is the profit margin per product?",
+      "category": "unanswerable",
+      "expected_type": "refusal",
+      "gold_sql": null,
+      "notes": "There are no product or cost columns; the assistant must say so instead of inventing data.",
+      "expected": null
+    }
+  ]
+}

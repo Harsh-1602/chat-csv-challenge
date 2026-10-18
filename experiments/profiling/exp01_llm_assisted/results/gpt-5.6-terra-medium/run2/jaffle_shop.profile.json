@@ -1,0 +1,420 @@
+{
+  "tables": {
+    "raw_customers": {
+      "entity": "customer",
+      "description": "Contains customer identity records with first and last names.",
+      "grain": "one row per customer",
+      "llm_primary_key": [
+        "id"
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "id": "identifier",
+        "first_name": "text",
+        "last_name": "text"
+      },
+      "units": {
+        "id": null,
+        "first_name": null,
+        "last_name": null
+      },
+      "descriptions": {
+        "id": "Unique identifier for the customer.",
+        "first_name": "Customer's first or given name.",
+        "last_name": "Customer's last name or surname, represented in the samples as an initial."
+      },
+      "references": {
+        "id": null,
+        "first_name": null,
+        "last_name": null
+      }
+    },
+    "raw_orders": {
+      "entity": "order",
+      "description": "Contains customer orders with their order date and fulfillment status.",
+      "grain": "One row per order.",
+      "llm_primary_key": [
+        "id"
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "id": "identifier",
+        "user_id": "identifier",
+        "order_date": "time",
+        "status": "dimension"
+      },
+      "units": {
+        "id": null,
+        "user_id": null,
+        "order_date": null,
+        "status": null
+      },
+      "descriptions": {
+        "id": "Unique identifier for the order.",
+        "user_id": "Identifier of the customer who placed the order.",
+        "order_date": "Date on which the order was placed.",
+        "status": "Current fulfillment or return status of the order."
+      },
+      "references": {
+        "id": null,
+        "user_id": "customer",
+        "order_date": null,
+        "status": null
+      }
+    },
+    "raw_payments": {
+      "entity": "payment",
+      "description": "This table records individual payment transactions applied to orders.",
+      "grain": "one row per payment transaction for an order",
+      "llm_primary_key": [
+        "id"
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "id": "identifier",
+        "order_id": "identifier",
+        "payment_method": "dimension",
+        "amount": "measure"
+      },
+      "units": {
+        "id": null,
+        "order_id": null,
+        "payment_method": null,
+        "amount": "cents"
+      },
+      "descriptions": {
+        "id": "Unique identifier for the payment record.",
+        "order_id": "Identifier of the order to which the payment is applied.",
+        "payment_method": "Method used to make the payment, such as credit card, bank transfer, coupon, or gift card.",
+        "amount": "Amount paid in the transaction."
+      },
+      "references": {
+        "id": null,
+        "order_id": "order",
+        "payment_method": null,
+        "amount": null
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": 1,
+      "from": "raw_orders.user_id",
+      "to": "raw_customers.id",
+      "name_similarity": 0.667,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 62,
+      "child_non_null_rows": 99,
+      "orphan_rows": 0,
+      "parent_coverage": 0.62,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "user_id is explicitly the identifier of the customer who placed the order and fully matches customer IDs.",
+      "cardinality": "many-to-one",
+      "fan_out": 1.597,
+      "join_warning": "Joining raw_orders to raw_customers repeats each raw_customers row ~1.597x; aggregate raw_customers measures before joining."
+    },
+    {
+      "id": 7,
+      "from": "raw_payments.order_id",
+      "to": "raw_orders.id",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 99,
+      "child_non_null_rows": 113,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "order_id is explicitly the order identifier for the payment and fully matches raw_orders.id.",
+      "cardinality": "many-to-one",
+      "fan_out": 1.141,
+      "join_warning": "Joining raw_payments to raw_orders repeats each raw_orders row ~1.141x; aggregate raw_orders measures before joining."
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "id": 0,
+      "from": "raw_orders.id",
+      "to": "raw_customers.id",
+      "name_similarity": 0.0,
+      "child_column_unique": true,
+      "containment": 1.0,
+      "child_distinct": 99,
+      "child_non_null_rows": 99,
+      "orphan_rows": 0,
+      "parent_coverage": 0.99
+    },
+    {
+      "id": 2,
+      "from": "raw_payments.id",
+      "to": "raw_customers.id",
+      "name_similarity": 0.0,
+      "child_column_unique": true,
+      "containment": 0.885,
+      "child_distinct": 113,
+      "child_non_null_rows": 113,
+      "orphan_rows": 13,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 3,
+      "from": "raw_payments.order_id",
+      "to": "raw_customers.id",
+      "name_similarity": 0.462,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 99,
+      "child_non_null_rows": 113,
+      "orphan_rows": 0,
+      "parent_coverage": 0.99
+    },
+    {
+      "id": 4,
+      "from": "raw_customers.id",
+      "to": "raw_orders.id",
+      "name_similarity": 0.0,
+      "child_column_unique": true,
+      "containment": 0.99,
+      "child_distinct": 100,
+      "child_non_null_rows": 100,
+      "orphan_rows": 1,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 5,
+      "from": "raw_orders.user_id",
+      "to": "raw_orders.id",
+      "name_similarity": 0.444,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 62,
+      "child_non_null_rows": 99,
+      "orphan_rows": 0,
+      "parent_coverage": 0.6263
+    },
+    {
+      "id": 6,
+      "from": "raw_payments.id",
+      "to": "raw_orders.id",
+      "name_similarity": 0.0,
+      "child_column_unique": true,
+      "containment": 0.8761,
+      "child_distinct": 113,
+      "child_non_null_rows": 113,
+      "orphan_rows": 14,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 8,
+      "from": "raw_customers.id",
+      "to": "raw_payments.id",
+      "name_similarity": 0.0,
+      "child_column_unique": true,
+      "containment": 1.0,
+      "child_distinct": 100,
+      "child_non_null_rows": 100,
+      "orphan_rows": 0,
+      "parent_coverage": 0.885
+    },
+    {
+      "id": 9,
+      "from": "raw_orders.id",
+      "to": "raw_payments.id",
+      "name_similarity": 0.0,
+      "child_column_unique": true,
+      "containment": 1.0,
+      "child_distinct": 99,
+      "child_non_null_rows": 99,
+      "orphan_rows": 0,
+      "parent_coverage": 0.8761
+    },
+    {
+      "id": 10,
+      "from": "raw_orders.user_id",
+      "to": "raw_payments.id",
+      "name_similarity": 0.182,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 62,
+      "child_non_null_rows": 99,
+      "orphan_rows": 0,
+      "parent_coverage": 0.5487
+    },
+    {
+      "id": 11,
+      "from": "raw_payments.order_id",
+      "to": "raw_payments.id",
+      "name_similarity": 0.167,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 99,
+      "child_non_null_rows": 113,
+      "orphan_rows": 0,
+      "parent_coverage": 0.8761
+    }
+  ],
+  "semantic_model": {
+    "dataset_summary": "This dataset contains customers, their orders, and payment transactions. `raw_orders` links each order to one customer through `user_id`, while `raw_payments` links payment transactions to orders through `order_id`; an order can have multiple payment rows.",
+    "metrics": [
+      {
+        "name": "customer_count",
+        "table": "raw_customers",
+        "expression": "COUNT(DISTINCT id)",
+        "description": "Number of unique customers.",
+        "valid": true
+      },
+      {
+        "name": "order_count",
+        "table": "raw_orders",
+        "expression": "COUNT(DISTINCT id)",
+        "description": "Number of unique orders placed.",
+        "valid": true
+      },
+      {
+        "name": "ordering_customer_count",
+        "table": "raw_orders",
+        "expression": "COUNT(DISTINCT user_id)",
+        "description": "Number of distinct customers with at least one order.",
+        "valid": true
+      },
+      {
+        "name": "total_payment_amount_usd",
+        "table": "raw_payments",
+        "expression": "SUM(amount) / 100.0",
+        "description": "Total payment transaction value in US dollars; source amounts are stored in cents.",
+        "valid": true
+      },
+      {
+        "name": "average_payment_amount_usd",
+        "table": "raw_payments",
+        "expression": "AVG(amount) / 100.0",
+        "description": "Average payment transaction value in US dollars.",
+        "valid": true
+      },
+      {
+        "name": "payment_transaction_count",
+        "table": "raw_payments",
+        "expression": "COUNT(DISTINCT id)",
+        "description": "Number of payment transactions.",
+        "valid": true
+      },
+      {
+        "name": "paid_order_count",
+        "table": "raw_payments",
+        "expression": "COUNT(DISTINCT order_id)",
+        "description": "Number of orders with at least one payment transaction.",
+        "valid": true
+      },
+      {
+        "name": "average_payments_per_paid_order",
+        "table": "raw_payments",
+        "expression": "COUNT(DISTINCT id) * 1.0 / NULLIF(COUNT(DISTINCT order_id), 0)",
+        "description": "Average number of payment transactions among orders that have payments.",
+        "valid": true
+      }
+    ],
+    "synonyms": [
+      {
+        "term": "customers",
+        "maps_to": "raw_customers"
+      },
+      {
+        "term": "customer ID",
+        "maps_to": "raw_customers.id"
+      },
+      {
+        "term": "buyer",
+        "maps_to": "raw_customers"
+      },
+      {
+        "term": "orders",
+        "maps_to": "raw_orders"
+      },
+      {
+        "term": "order ID",
+        "maps_to": "raw_orders.id"
+      },
+      {
+        "term": "order date",
+        "maps_to": "raw_orders.order_date"
+      },
+      {
+        "term": "order status",
+        "maps_to": "raw_orders.status"
+      },
+      {
+        "term": "customer orders",
+        "maps_to": "raw_orders.user_id"
+      },
+      {
+        "term": "payments",
+        "maps_to": "raw_payments"
+      },
+      {
+        "term": "payment transaction",
+        "maps_to": "raw_payments"
+      },
+      {
+        "term": "payment method",
+        "maps_to": "raw_payments.payment_method"
+      },
+      {
+        "term": "revenue",
+        "maps_to": "total_payment_amount_usd"
+      },
+      {
+        "term": "sales",
+        "maps_to": "total_payment_amount_usd"
+      },
+      {
+        "term": "payment amount",
+        "maps_to": "raw_payments.amount"
+      },
+      {
+        "term": "paid orders",
+        "maps_to": "paid_order_count"
+      }
+    ],
+    "caveats": [
+      "`raw_payments.amount` is stored in cents. Divide by 100.0 to report monetary values in dollars.",
+      "Payment amount is transaction value, not necessarily a finalized order total: one order may have multiple payment rows, including methods such as coupon or gift card.",
+      "Joining orders to payments multiplies order-level rows for orders with multiple payments (observed relationship fan-out is approximately 1.141). Use `COUNT(DISTINCT raw_orders.id)` for order counts after this join and aggregate payment amounts at the appropriate grain.",
+      "Joining customers to orders also repeats customer rows for customers with multiple orders (observed fan-out is approximately 1.597). Count distinct customer IDs when measuring customers after joining orders.",
+      "Use `raw_orders.order_date` for order timing; no payment date is available.",
+      "The order date coverage is 2018-01-01 through 2018-04-09, so trend analysis represents only this range.",
+      "`raw_orders.user_id` ranges through 99 while the customer table contains IDs through 100; do not assume every customer has placed an order.",
+      "Orders may have no associated payment, and payment-based metrics therefore exclude such orders unless a left join from orders is used.",
+      "Order status is stored only on `raw_orders`; the provided schema does not define which statuses should be considered completed, cancelled, returned, or revenue-eligible. Avoid filtering status without inspecting its values."
+    ],
+    "example_questions": [
+      "How many orders were placed by day and by order status?",
+      "What was total payment value in dollars by payment method?",
+      "Which customers placed the most orders?",
+      "How many orders have at least one payment transaction, and how many do not?",
+      "What is the average payment transaction amount by payment method?"
+    ]
+  },
+  "timings_s": {
+    "p1_stats": 0.06,
+    "p2_llm": 4.28,
+    "p2_verify": 0.01,
+    "p3_candidates": 0.11,
+    "p4_llm_verify": 3.37,
+    "p5_structure": 0.0,
+    "p6_llm_validate": 7.3
+  }
+}

@@ -1,0 +1,1534 @@
+{
+  "tables": {
+    "album": {
+      "entity": "album",
+      "description": "This table contains information about music albums, including their unique identifier, title, and the artist who created them.",
+      "grain": "one row per album",
+      "llm_primary_key": [
+        "AlbumId"
+      ],
+      "primary_key": [
+        "AlbumId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "AlbumId": "identifier",
+        "Title": "text",
+        "ArtistId": "identifier"
+      },
+      "units": {
+        "AlbumId": null,
+        "Title": null,
+        "ArtistId": null
+      },
+      "descriptions": {
+        "AlbumId": "Unique identifier for each album",
+        "Title": "Title of the album",
+        "ArtistId": "Identifier of the artist who created the album"
+      },
+      "references": {
+        "AlbumId": null,
+        "Title": null,
+        "ArtistId": "artist"
+      }
+    },
+    "artist": {
+      "entity": "artist",
+      "description": "This table contains information about musical artists, each identified by a unique artist ID and name.",
+      "grain": "one row per artist",
+      "llm_primary_key": [
+        "ArtistId"
+      ],
+      "primary_key": [
+        "ArtistId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "ArtistId": "identifier",
+        "Name": "text"
+      },
+      "units": {
+        "ArtistId": null,
+        "Name": null
+      },
+      "descriptions": {
+        "ArtistId": "Unique identifier for each artist",
+        "Name": "Name of the artist"
+      },
+      "references": {
+        "ArtistId": null,
+        "Name": null
+      }
+    },
+    "customer": {
+      "entity": "customer",
+      "description": "This table contains information about customers including their contact details and support representative.",
+      "grain": "one row per customer",
+      "llm_primary_key": [
+        "CustomerId"
+      ],
+      "primary_key": [
+        "CustomerId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "CustomerId": "identifier",
+        "FirstName": "text",
+        "LastName": "text",
+        "Company": "text",
+        "Address": "text",
+        "City": "dimension",
+        "State": "dimension",
+        "Country": "dimension",
+        "PostalCode": "dimension",
+        "Phone": "text",
+        "Fax": "text",
+        "Email": "identifier",
+        "SupportRepId": "identifier"
+      },
+      "units": {
+        "CustomerId": null,
+        "FirstName": null,
+        "LastName": null,
+        "Company": null,
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "PostalCode": null,
+        "Phone": null,
+        "Fax": null,
+        "Email": null,
+        "SupportRepId": null
+      },
+      "descriptions": {
+        "CustomerId": "Unique identifier for each customer",
+        "FirstName": "Customer's first name",
+        "LastName": "Customer's last name, unique per customer",
+        "Company": "Company name associated with the customer, if any",
+        "Address": "Customer's street address",
+        "City": "City of the customer's address",
+        "State": "State or province of the customer's address, nullable",
+        "Country": "Country of the customer's address",
+        "PostalCode": "Postal code of the customer's address, nullable",
+        "Phone": "Customer's phone number",
+        "Fax": "Customer's fax number, nullable",
+        "Email": "Customer's unique email address",
+        "SupportRepId": "Identifier of the support representative assigned to the customer"
+      },
+      "references": {
+        "CustomerId": null,
+        "FirstName": null,
+        "LastName": null,
+        "Company": null,
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "PostalCode": null,
+        "Phone": null,
+        "Fax": null,
+        "Email": null,
+        "SupportRepId": "employee"
+      }
+    },
+    "employee": {
+      "entity": "employee",
+      "description": "This table contains information about employees including their personal details, job titles, contact information, and reporting hierarchy within the company.",
+      "grain": "one row per employee",
+      "llm_primary_key": [
+        "EmployeeId"
+      ],
+      "primary_key": [
+        "EmployeeId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "EmployeeId": "identifier",
+        "LastName": "identifier",
+        "FirstName": "identifier",
+        "Title": "dimension",
+        "ReportsTo": "identifier",
+        "BirthDate": "time",
+        "HireDate": "time",
+        "Address": "text",
+        "City": "dimension",
+        "State": "dimension",
+        "Country": "dimension",
+        "PostalCode": "identifier",
+        "Phone": "text",
+        "Fax": "text",
+        "Email": "identifier"
+      },
+      "units": {
+        "EmployeeId": null,
+        "LastName": null,
+        "FirstName": null,
+        "Title": null,
+        "ReportsTo": null,
+        "BirthDate": "date",
+        "HireDate": "date",
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "PostalCode": null,
+        "Phone": null,
+        "Fax": null,
+        "Email": null
+      },
+      "descriptions": {
+        "EmployeeId": "Unique identifier for each employee",
+        "LastName": "Employee's last name",
+        "FirstName": "Employee's first name",
+        "Title": "Employee's job title",
+        "ReportsTo": "EmployeeId of the manager this employee reports to",
+        "BirthDate": "Employee's birth date",
+        "HireDate": "Date the employee was hired",
+        "Address": "Employee's street address",
+        "City": "City of the employee's address",
+        "State": "State or province of the employee's address",
+        "Country": "Country of the employee's address",
+        "PostalCode": "Postal code of the employee's address",
+        "Phone": "Employee's phone number",
+        "Fax": "Employee's fax number",
+        "Email": "Employee's email address"
+      },
+      "references": {
+        "EmployeeId": null,
+        "LastName": null,
+        "FirstName": null,
+        "Title": null,
+        "ReportsTo": "employee",
+        "BirthDate": null,
+        "HireDate": null,
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "PostalCode": null,
+        "Phone": null,
+        "Fax": null,
+        "Email": null
+      }
+    },
+    "genre": {
+      "entity": "genre",
+      "description": "This table lists music genres with unique identifiers and names.",
+      "grain": "one row per music genre",
+      "llm_primary_key": [
+        "GenreId"
+      ],
+      "primary_key": [
+        "GenreId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "GenreId": "identifier",
+        "Name": "dimension"
+      },
+      "units": {
+        "GenreId": null,
+        "Name": null
+      },
+      "descriptions": {
+        "GenreId": "Unique identifier for each music genre",
+        "Name": "Name of the music genre"
+      },
+      "references": {
+        "GenreId": null,
+        "Name": null
+      }
+    },
+    "invoice": {
+      "entity": "invoice",
+      "description": "This table contains billing and payment information for customer purchases, including invoice date, billing address details, and total amount.",
+      "grain": "one row per invoice",
+      "llm_primary_key": [
+        "InvoiceId"
+      ],
+      "primary_key": [
+        "InvoiceId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "InvoiceId": "identifier",
+        "CustomerId": "identifier",
+        "InvoiceDate": "time",
+        "BillingAddress": "text",
+        "BillingCity": "dimension",
+        "BillingState": "dimension",
+        "BillingCountry": "dimension",
+        "BillingPostalCode": "dimension",
+        "Total": "measure"
+      },
+      "units": {
+        "InvoiceId": null,
+        "CustomerId": null,
+        "InvoiceDate": null,
+        "BillingAddress": null,
+        "BillingCity": null,
+        "BillingState": null,
+        "BillingCountry": null,
+        "BillingPostalCode": null,
+        "Total": "USD"
+      },
+      "descriptions": {
+        "InvoiceId": "Unique identifier for each invoice",
+        "CustomerId": "Identifier of the customer who made the purchase",
+        "InvoiceDate": "Date when the invoice was issued",
+        "BillingAddress": "Billing street address for the invoice",
+        "BillingCity": "City of the billing address",
+        "BillingState": "State or region of the billing address, nullable",
+        "BillingCountry": "Country of the billing address",
+        "BillingPostalCode": "Postal code of the billing address, nullable",
+        "Total": "Total amount charged on the invoice"
+      },
+      "references": {
+        "InvoiceId": null,
+        "CustomerId": "customer",
+        "InvoiceDate": null,
+        "BillingAddress": null,
+        "BillingCity": null,
+        "BillingState": null,
+        "BillingCountry": null,
+        "BillingPostalCode": null,
+        "Total": null
+      }
+    },
+    "invoiceline": {
+      "entity": "invoice line",
+      "description": "This table contains individual line items for invoices, detailing the tracks purchased, their unit prices, and quantities.",
+      "grain": "one row per invoice line item",
+      "llm_primary_key": [
+        "InvoiceLineId"
+      ],
+      "primary_key": [
+        "InvoiceLineId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "InvoiceLineId": "identifier",
+        "InvoiceId": "identifier",
+        "TrackId": "identifier",
+        "UnitPrice": "measure",
+        "Quantity": "measure"
+      },
+      "units": {
+        "InvoiceLineId": null,
+        "InvoiceId": null,
+        "TrackId": null,
+        "UnitPrice": "USD",
+        "Quantity": "count"
+      },
+      "descriptions": {
+        "InvoiceLineId": "Unique identifier for each invoice line item",
+        "InvoiceId": "Identifier of the invoice this line belongs to",
+        "TrackId": "Identifier of the track purchased in this invoice line",
+        "UnitPrice": "Price per unit of the track at the time of purchase",
+        "Quantity": "Quantity of the track purchased in this line (always 1)"
+      },
+      "references": {
+        "InvoiceLineId": null,
+        "InvoiceId": "invoice",
+        "TrackId": "track",
+        "UnitPrice": null,
+        "Quantity": null
+      }
+    },
+    "mediatype": {
+      "entity": "mediatype",
+      "description": "This table lists different types of media formats available for tracks.",
+      "grain": "one row per media type",
+      "llm_primary_key": [
+        "MediaTypeId"
+      ],
+      "primary_key": [
+        "MediaTypeId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "MediaTypeId": "identifier",
+        "Name": "dimension"
+      },
+      "units": {
+        "MediaTypeId": null,
+        "Name": null
+      },
+      "descriptions": {
+        "MediaTypeId": "Unique identifier for each media type",
+        "Name": "Name of the media type or format"
+      },
+      "references": {
+        "MediaTypeId": null,
+        "Name": null
+      }
+    },
+    "playlist": {
+      "entity": "playlist",
+      "description": "This table contains playlists, each identified by a unique ID and named with a descriptive title.",
+      "grain": "one row per playlist",
+      "llm_primary_key": [
+        "PlaylistId"
+      ],
+      "primary_key": [
+        "PlaylistId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "PlaylistId": "identifier",
+        "Name": "text"
+      },
+      "units": {
+        "PlaylistId": null,
+        "Name": null
+      },
+      "descriptions": {
+        "PlaylistId": "Unique identifier for each playlist",
+        "Name": "Name of the playlist"
+      },
+      "references": {
+        "PlaylistId": null,
+        "Name": null
+      }
+    },
+    "playlisttrack": {
+      "entity": "playlist track",
+      "description": "This table represents the association between playlists and tracks, indicating which tracks are included in which playlists.",
+      "grain": "one row per track in a playlist",
+      "llm_primary_key": [
+        "PlaylistId",
+        "TrackId"
+      ],
+      "primary_key": [
+        "PlaylistId",
+        "TrackId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "PlaylistId": "identifier",
+        "TrackId": "identifier"
+      },
+      "units": {
+        "PlaylistId": null,
+        "TrackId": null
+      },
+      "descriptions": {
+        "PlaylistId": "Identifier of the playlist containing the track",
+        "TrackId": "Identifier of the track included in the playlist"
+      },
+      "references": {
+        "PlaylistId": "playlist",
+        "TrackId": "track"
+      }
+    },
+    "track": {
+      "entity": "track",
+      "description": "This table contains information about individual music tracks including their name, album, media type, genre, composer, duration, file size, and price.",
+      "grain": "one row per track",
+      "llm_primary_key": [
+        "TrackId"
+      ],
+      "primary_key": [
+        "TrackId"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "TrackId": "identifier",
+        "Name": "text",
+        "AlbumId": "identifier",
+        "MediaTypeId": "identifier",
+        "GenreId": "identifier",
+        "Composer": "text",
+        "Milliseconds": "measure",
+        "Bytes": "measure",
+        "UnitPrice": "measure"
+      },
+      "units": {
+        "TrackId": null,
+        "Name": null,
+        "AlbumId": null,
+        "MediaTypeId": null,
+        "GenreId": null,
+        "Composer": null,
+        "Milliseconds": "milliseconds",
+        "Bytes": "bytes",
+        "UnitPrice": "USD"
+      },
+      "descriptions": {
+        "TrackId": "Unique identifier for each track",
+        "Name": "Name of the track",
+        "AlbumId": "Identifier of the album this track belongs to",
+        "MediaTypeId": "Identifier of the media type for this track",
+        "GenreId": "Identifier of the genre of the track",
+        "Composer": "Name(s) of the composer(s) of the track",
+        "Milliseconds": "Duration of the track in milliseconds",
+        "Bytes": "Size of the track file in bytes",
+        "UnitPrice": "Price of the track"
+      },
+      "references": {
+        "TrackId": null,
+        "Name": null,
+        "AlbumId": "album",
+        "MediaTypeId": "mediatype",
+        "GenreId": "genre",
+        "Composer": null,
+        "Milliseconds": null,
+        "Bytes": null,
+        "UnitPrice": null
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": 6,
+      "from": "track.AlbumId",
+      "to": "album.AlbumId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 347,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "track.AlbumId correctly references album.AlbumId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 10.095,
+      "join_warning": "Joining track to album repeats each album row ~10.095x; aggregate album measures before joining."
+    },
+    {
+      "id": 9,
+      "from": "album.ArtistId",
+      "to": "artist.ArtistId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 204,
+      "child_non_null_rows": 347,
+      "orphan_rows": 0,
+      "parent_coverage": 0.7418,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "album.ArtistId correctly references artist.ArtistId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 1.701,
+      "join_warning": "Joining album to artist repeats each artist row ~1.701x; aggregate artist measures before joining."
+    },
+    {
+      "id": 20,
+      "from": "invoice.CustomerId",
+      "to": "customer.CustomerId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 59,
+      "child_non_null_rows": 412,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "invoice.CustomerId correctly references customer.CustomerId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 6.983,
+      "join_warning": "Joining invoice to customer repeats each customer row ~6.983x; aggregate customer measures before joining."
+    },
+    {
+      "id": 24,
+      "from": "customer.SupportRepId",
+      "to": "employee.EmployeeId",
+      "name_similarity": 0.333,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.375,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "customer.SupportRepId correctly references employee.EmployeeId as support representative.",
+      "cardinality": "many-to-one",
+      "fan_out": 19.667,
+      "join_warning": "Joining customer to employee repeats each employee row ~19.667x; aggregate employee measures before joining."
+    },
+    {
+      "id": 25,
+      "from": "employee.ReportsTo",
+      "to": "employee.EmployeeId",
+      "name_similarity": 0.353,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.375,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "employee.ReportsTo correctly references employee.EmployeeId as manager.",
+      "cardinality": "many-to-one",
+      "fan_out": 2.333,
+      "join_warning": "Joining employee to employee repeats each employee row ~2.333x; aggregate employee measures before joining."
+    },
+    {
+      "id": 31,
+      "from": "track.GenreId",
+      "to": "genre.GenreId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "track.GenreId correctly references genre.GenreId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 140.12,
+      "join_warning": "Joining track to genre repeats each genre row ~140.12x; aggregate genre measures before joining."
+    },
+    {
+      "id": 36,
+      "from": "invoiceline.InvoiceId",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 412,
+      "child_non_null_rows": 2240,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "invoiceline.InvoiceId correctly references invoice.InvoiceId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 5.437,
+      "join_warning": "Joining invoiceline to invoice repeats each invoice row ~5.437x; aggregate invoice measures before joining."
+    },
+    {
+      "id": 54,
+      "from": "track.MediaTypeId",
+      "to": "mediatype.MediaTypeId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "track.MediaTypeId correctly references mediatype.MediaTypeId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 700.6,
+      "join_warning": "Joining track to mediatype repeats each mediatype row ~700.6x; aggregate mediatype measures before joining."
+    },
+    {
+      "id": 57,
+      "from": "playlisttrack.PlaylistId",
+      "to": "playlist.PlaylistId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 14,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 0.7778,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "playlisttrack.PlaylistId correctly references playlist.PlaylistId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 622.5,
+      "join_warning": "Joining playlisttrack to playlist repeats each playlist row ~622.5x; aggregate playlist measures before joining."
+    },
+    {
+      "id": 65,
+      "from": "invoiceline.TrackId",
+      "to": "track.TrackId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 1984,
+      "child_non_null_rows": 2240,
+      "orphan_rows": 0,
+      "parent_coverage": 0.5664,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "invoiceline.TrackId correctly references track.TrackId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 1.129,
+      "join_warning": "Joining invoiceline to track repeats each track row ~1.129x; aggregate track measures before joining."
+    },
+    {
+      "id": 67,
+      "from": "playlisttrack.TrackId",
+      "to": "track.TrackId",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3503,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "playlisttrack.TrackId correctly references track.TrackId with perfect containment and name similarity.",
+      "cardinality": "many-to-one",
+      "fan_out": 2.488,
+      "join_warning": "Joining playlisttrack to track repeats each track row ~2.488x; aggregate track measures before joining."
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "id": 0,
+      "from": "album.ArtistId",
+      "to": "album.AlbumId",
+      "name_similarity": 0.182,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 204,
+      "child_non_null_rows": 347,
+      "orphan_rows": 0,
+      "parent_coverage": 0.5879
+    },
+    {
+      "id": 1,
+      "from": "customer.SupportRepId",
+      "to": "album.AlbumId",
+      "name_similarity": 0.133,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0086
+    },
+    {
+      "id": 2,
+      "from": "employee.ReportsTo",
+      "to": "album.AlbumId",
+      "name_similarity": 0.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0086
+    },
+    {
+      "id": 3,
+      "from": "invoice.CustomerId",
+      "to": "album.AlbumId",
+      "name_similarity": 0.308,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 59,
+      "child_non_null_rows": 412,
+      "orphan_rows": 0,
+      "parent_coverage": 0.17
+    },
+    {
+      "id": 4,
+      "from": "invoiceline.InvoiceId",
+      "to": "album.AlbumId",
+      "name_similarity": 0.0,
+      "child_column_unique": false,
+      "containment": 0.8422,
+      "child_distinct": 412,
+      "child_non_null_rows": 2240,
+      "orphan_rows": 357,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 5,
+      "from": "playlisttrack.PlaylistId",
+      "to": "album.AlbumId",
+      "name_similarity": 0.154,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 14,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0403
+    },
+    {
+      "id": 7,
+      "from": "track.MediaTypeId",
+      "to": "album.AlbumId",
+      "name_similarity": 0.143,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0144
+    },
+    {
+      "id": 8,
+      "from": "track.GenreId",
+      "to": "album.AlbumId",
+      "name_similarity": 0.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.072
+    },
+    {
+      "id": 10,
+      "from": "customer.SupportRepId",
+      "to": "artist.ArtistId",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0109
+    },
+    {
+      "id": 11,
+      "from": "employee.ReportsTo",
+      "to": "artist.ArtistId",
+      "name_similarity": 0.533,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0109
+    },
+    {
+      "id": 12,
+      "from": "invoice.CustomerId",
+      "to": "artist.ArtistId",
+      "name_similarity": 0.286,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 59,
+      "child_non_null_rows": 412,
+      "orphan_rows": 0,
+      "parent_coverage": 0.2145
+    },
+    {
+      "id": 13,
+      "from": "invoiceline.InvoiceId",
+      "to": "artist.ArtistId",
+      "name_similarity": 0.154,
+      "child_column_unique": false,
+      "containment": 0.6675,
+      "child_distinct": 412,
+      "child_non_null_rows": 2240,
+      "orphan_rows": 752,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 14,
+      "from": "playlisttrack.PlaylistId",
+      "to": "artist.ArtistId",
+      "name_similarity": 0.571,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 14,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0509
+    },
+    {
+      "id": 15,
+      "from": "track.AlbumId",
+      "to": "artist.ArtistId",
+      "name_similarity": 0.182,
+      "child_column_unique": false,
+      "containment": 0.7925,
+      "child_distinct": 347,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 95,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 16,
+      "from": "track.MediaTypeId",
+      "to": "artist.ArtistId",
+      "name_similarity": 0.267,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0182
+    },
+    {
+      "id": 17,
+      "from": "track.GenreId",
+      "to": "artist.ArtistId",
+      "name_similarity": 0.182,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0909
+    },
+    {
+      "id": 18,
+      "from": "customer.SupportRepId",
+      "to": "customer.CustomerId",
+      "name_similarity": 0.333,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0508
+    },
+    {
+      "id": 19,
+      "from": "employee.ReportsTo",
+      "to": "customer.CustomerId",
+      "name_similarity": 0.353,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0508
+    },
+    {
+      "id": 21,
+      "from": "playlisttrack.PlaylistId",
+      "to": "customer.CustomerId",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 14,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 0.2373
+    },
+    {
+      "id": 22,
+      "from": "track.MediaTypeId",
+      "to": "customer.CustomerId",
+      "name_similarity": 0.235,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0847
+    },
+    {
+      "id": 23,
+      "from": "track.GenreId",
+      "to": "customer.CustomerId",
+      "name_similarity": 0.308,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.4237
+    },
+    {
+      "id": 26,
+      "from": "track.MediaTypeId",
+      "to": "employee.EmployeeId",
+      "name_similarity": 0.353,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.625
+    },
+    {
+      "id": 27,
+      "from": "customer.SupportRepId",
+      "to": "genre.GenreId",
+      "name_similarity": 0.267,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.12
+    },
+    {
+      "id": 28,
+      "from": "employee.ReportsTo",
+      "to": "genre.GenreId",
+      "name_similarity": 0.286,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.12
+    },
+    {
+      "id": 29,
+      "from": "playlisttrack.PlaylistId",
+      "to": "genre.GenreId",
+      "name_similarity": 0.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 14,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 0.56
+    },
+    {
+      "id": 30,
+      "from": "track.MediaTypeId",
+      "to": "genre.GenreId",
+      "name_similarity": 0.286,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.2
+    },
+    {
+      "id": 32,
+      "from": "album.ArtistId",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 0.154,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 204,
+      "child_non_null_rows": 347,
+      "orphan_rows": 0,
+      "parent_coverage": 0.4951
+    },
+    {
+      "id": 33,
+      "from": "customer.SupportRepId",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 0.235,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0073
+    },
+    {
+      "id": 34,
+      "from": "employee.ReportsTo",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 0.125,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0073
+    },
+    {
+      "id": 35,
+      "from": "invoice.CustomerId",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 0.267,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 59,
+      "child_non_null_rows": 412,
+      "orphan_rows": 0,
+      "parent_coverage": 0.1432
+    },
+    {
+      "id": 37,
+      "from": "playlisttrack.PlaylistId",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 0.133,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 14,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 0.034
+    },
+    {
+      "id": 38,
+      "from": "track.AlbumId",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 0.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 347,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.8422
+    },
+    {
+      "id": 39,
+      "from": "track.MediaTypeId",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 0.125,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0121
+    },
+    {
+      "id": 40,
+      "from": "track.GenreId",
+      "to": "invoice.InvoiceId",
+      "name_similarity": 0.167,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0607
+    },
+    {
+      "id": 41,
+      "from": "album.ArtistId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.118,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 204,
+      "child_non_null_rows": 347,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0911
+    },
+    {
+      "id": 42,
+      "from": "customer.SupportRepId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.19,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0013
+    },
+    {
+      "id": 43,
+      "from": "employee.ReportsTo",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.1,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0013
+    },
+    {
+      "id": 44,
+      "from": "invoice.CustomerId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.211,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 59,
+      "child_non_null_rows": 412,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0263
+    },
+    {
+      "id": 45,
+      "from": "invoiceline.InvoiceId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.778,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 412,
+      "child_non_null_rows": 2240,
+      "orphan_rows": 0,
+      "parent_coverage": 0.1839
+    },
+    {
+      "id": 46,
+      "from": "invoiceline.TrackId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.125,
+      "child_column_unique": false,
+      "containment": 0.6477,
+      "child_distinct": 1984,
+      "child_non_null_rows": 2240,
+      "orphan_rows": 785,
+      "parent_coverage": 0.5737
+    },
+    {
+      "id": 47,
+      "from": "playlisttrack.PlaylistId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.211,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 14,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0063
+    },
+    {
+      "id": 48,
+      "from": "playlisttrack.TrackId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.125,
+      "child_column_unique": false,
+      "containment": 0.6395,
+      "child_distinct": 3503,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 3207,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 49,
+      "from": "track.AlbumId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.125,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 347,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.1549
+    },
+    {
+      "id": 50,
+      "from": "track.MediaTypeId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.3,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0022
+    },
+    {
+      "id": 51,
+      "from": "track.GenreId",
+      "to": "invoiceline.InvoiceLineId",
+      "name_similarity": 0.375,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0112
+    },
+    {
+      "id": 52,
+      "from": "customer.SupportRepId",
+      "to": "mediatype.MediaTypeId",
+      "name_similarity": 0.211,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.6
+    },
+    {
+      "id": 53,
+      "from": "employee.ReportsTo",
+      "to": "mediatype.MediaTypeId",
+      "name_similarity": 0.222,
+      "child_column_unique": false,
+      "containment": 0.6667,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 2,
+      "parent_coverage": 0.4
+    },
+    {
+      "id": 55,
+      "from": "customer.SupportRepId",
+      "to": "playlist.PlaylistId",
+      "name_similarity": 0.222,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.1667
+    },
+    {
+      "id": 56,
+      "from": "employee.ReportsTo",
+      "to": "playlist.PlaylistId",
+      "name_similarity": 0.353,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.1667
+    },
+    {
+      "id": 58,
+      "from": "track.MediaTypeId",
+      "to": "playlist.PlaylistId",
+      "name_similarity": 0.235,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.2778
+    },
+    {
+      "id": 59,
+      "from": "track.GenreId",
+      "to": "playlist.PlaylistId",
+      "name_similarity": 0.0,
+      "child_column_unique": false,
+      "containment": 0.72,
+      "child_distinct": 25,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 315,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 60,
+      "from": "album.ArtistId",
+      "to": "track.TrackId",
+      "name_similarity": 0.182,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 204,
+      "child_non_null_rows": 347,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0582
+    },
+    {
+      "id": 61,
+      "from": "customer.SupportRepId",
+      "to": "track.TrackId",
+      "name_similarity": 0.267,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 59,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0009
+    },
+    {
+      "id": 62,
+      "from": "employee.ReportsTo",
+      "to": "track.TrackId",
+      "name_similarity": 0.143,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 3,
+      "child_non_null_rows": 7,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0009
+    },
+    {
+      "id": 63,
+      "from": "invoice.CustomerId",
+      "to": "track.TrackId",
+      "name_similarity": 0.154,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 59,
+      "child_non_null_rows": 412,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0168
+    },
+    {
+      "id": 64,
+      "from": "invoiceline.InvoiceId",
+      "to": "track.TrackId",
+      "name_similarity": 0.167,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 412,
+      "child_non_null_rows": 2240,
+      "orphan_rows": 0,
+      "parent_coverage": 0.1176
+    },
+    {
+      "id": 66,
+      "from": "playlisttrack.PlaylistId",
+      "to": "track.TrackId",
+      "name_similarity": 0.154,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 14,
+      "child_non_null_rows": 8715,
+      "orphan_rows": 0,
+      "parent_coverage": 0.004
+    },
+    {
+      "id": 68,
+      "from": "track.AlbumId",
+      "to": "track.TrackId",
+      "name_similarity": 0.2,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 347,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0991
+    },
+    {
+      "id": 69,
+      "from": "track.MediaTypeId",
+      "to": "track.TrackId",
+      "name_similarity": 0.143,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0014
+    },
+    {
+      "id": 70,
+      "from": "track.GenreId",
+      "to": "track.TrackId",
+      "name_similarity": 0.2,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 3503,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0071
+    }
+  ],
+  "semantic_model": {
+    "dataset_summary": "This dataset covers a digital music store's data including artists, albums, tracks, customers, employees, invoices, and playlists. Tables are connected primarily through identifiers such as ArtistId, AlbumId, TrackId, CustomerId, and InvoiceId, enabling analysis of sales, customer behavior, and music catalog details.",
+    "metrics": [
+      {
+        "name": "Total Revenue",
+        "table": "invoice",
+        "expression": "SUM(\"Total\")",
+        "description": "Total revenue from all invoices in USD.",
+        "valid": true
+      },
+      {
+        "name": "Number of Customers",
+        "table": "customer",
+        "expression": "COUNT(DISTINCT \"CustomerId\")",
+        "description": "Total number of unique customers.",
+        "valid": true
+      },
+      {
+        "name": "Number of Tracks Sold",
+        "table": "invoiceline",
+        "expression": "COUNT(\"InvoiceLineId\")",
+        "description": "Total number of tracks sold (invoice line items).",
+        "valid": true
+      },
+      {
+        "name": "Average Track Price",
+        "table": "track",
+        "expression": "AVG(\"UnitPrice\")",
+        "description": "Average price of tracks in the catalog in USD.",
+        "valid": true
+      },
+      {
+        "name": "Total Number of Albums",
+        "table": "album",
+        "expression": "COUNT(DISTINCT \"AlbumId\")",
+        "description": "Total number of albums in the catalog.",
+        "valid": true
+      },
+      {
+        "name": "Total Number of Artists",
+        "table": "artist",
+        "expression": "COUNT(DISTINCT \"ArtistId\")",
+        "description": "Total number of artists in the catalog.",
+        "valid": true
+      },
+      {
+        "name": "Total Number of Employees",
+        "table": "employee",
+        "expression": "COUNT(DISTINCT \"EmployeeId\")",
+        "description": "Total number of employees.",
+        "valid": true
+      },
+      {
+        "name": "Total Number of Playlists",
+        "table": "playlist",
+        "expression": "COUNT(DISTINCT \"PlaylistId\")",
+        "description": "Total number of playlists.",
+        "valid": true
+      }
+    ],
+    "synonyms": [
+      {
+        "term": "sales",
+        "maps_to": "invoice.Total"
+      },
+      {
+        "term": "customers",
+        "maps_to": "customer.CustomerId"
+      },
+      {
+        "term": "tracks sold",
+        "maps_to": "invoiceline.InvoiceLineId"
+      },
+      {
+        "term": "albums",
+        "maps_to": "album.AlbumId"
+      },
+      {
+        "term": "artists",
+        "maps_to": "artist.ArtistId"
+      },
+      {
+        "term": "employees",
+        "maps_to": "employee.EmployeeId"
+      },
+      {
+        "term": "playlists",
+        "maps_to": "playlist.PlaylistId"
+      },
+      {
+        "term": "track price",
+        "maps_to": "track.UnitPrice"
+      }
+    ],
+    "caveats": [
+      "Invoice.Total is in USD and represents the total charged per invoice, which may include multiple tracks; summing invoice totals gives total revenue without double counting.",
+      "InvoiceLine.Quantity is always 1, so counting invoice lines equals number of tracks sold.",
+      "Some columns like customer.State and customer.Company have high null percentages and should be handled accordingly.",
+      "Employee.ReportsTo is a self-referential foreign key indicating management hierarchy; some employees may have null managers.",
+      "Dates in invoice.InvoiceDate range from 2009 to 2013; analyses involving time should consider this range.",
+      "Joins between tables like track to album to artist are many-to-one, but joins involving playlisttrack to track can fan out and increase row counts significantly."
+    ],
+    "example_questions": [
+      "What is the total revenue generated from sales?",
+      "How many unique customers have made purchases?",
+      "Which artist has the most albums in the catalog?",
+      "What is the average price of tracks sold?",
+      "How many tracks are included in each playlist?"
+    ]
+  },
+  "timings_s": {
+    "p1_stats": 0.14,
+    "p2_llm": 5.76,
+    "p2_verify": 0.03,
+    "p3_candidates": 0.59,
+    "p4_llm_verify": 17.69,
+    "p5_structure": 0.01,
+    "p6_llm_validate": 4.41
+  }
+}

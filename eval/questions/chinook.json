@@ -1,0 +1,239 @@
+{
+  "dataset": "chinook",
+  "description": "Digital music store: artists, albums, tracks, playlists, customers, employees, invoices (11 CSVs, ~15.6k rows).",
+  "source": "https://github.com/lerocha/chinook-database (release v1.4.5, Chinook_Sqlite.sqlite exported to CSV)",
+  "license": "MIT",
+  "relationships": [
+    {
+      "from": "album.ArtistId",
+      "to": "artist.ArtistId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "track.AlbumId",
+      "to": "album.AlbumId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "track.GenreId",
+      "to": "genre.GenreId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "track.MediaTypeId",
+      "to": "mediatype.MediaTypeId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "invoice.CustomerId",
+      "to": "customer.CustomerId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "invoiceline.InvoiceId",
+      "to": "invoice.InvoiceId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "invoiceline.TrackId",
+      "to": "track.TrackId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "playlisttrack.PlaylistId",
+      "to": "playlist.PlaylistId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "playlisttrack.TrackId",
+      "to": "track.TrackId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "customer.SupportRepId",
+      "to": "employee.EmployeeId",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "employee.ReportsTo",
+      "to": "employee.EmployeeId",
+      "cardinality": "many-to-one"
+    }
+  ],
+  "data_notes": [
+    "invoice.Total equals the sum of UnitPrice * Quantity of its invoice lines.",
+    "customer.SupportRepId and employee.ReportsTo reference employee.EmployeeId under different names.",
+    "playlisttrack is a many-to-many bridge with a composite key."
+  ],
+  "questions": [
+    {
+      "id": "ch-01",
+      "question": "How many tracks are in the catalog?",
+      "category": "aggregation",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS tracks FROM track"
+    },
+    {
+      "id": "ch-02",
+      "question": "Which 10 countries generate the most revenue?",
+      "category": "aggregation + ranking",
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "country",
+        "y": "revenue"
+      },
+      "gold_sql": "SELECT BillingCountry AS country, round(sum(Total), 2) AS revenue FROM invoice GROUP BY country ORDER BY revenue DESC, country LIMIT 10",
+      "order_matters": false,
+      "tolerance": 0.01
+    },
+    {
+      "id": "ch-03",
+      "question": "Show monthly revenue for 2013.",
+      "category": "time series",
+      "expected_type": "chart",
+      "chart": {
+        "type": "line",
+        "x": "month",
+        "y": "revenue"
+      },
+      "gold_sql": "SELECT date_trunc('month', InvoiceDate) AS month, round(sum(Total), 2) AS revenue FROM invoice WHERE year(InvoiceDate) = 2013 GROUP BY month ORDER BY month",
+      "order_matters": false,
+      "tolerance": 0.01
+    },
+    {
+      "id": "ch-04",
+      "question": "What are the top 5 genres by number of tracks sold?",
+      "category": "join + ranking",
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "genre",
+        "y": "tracks_sold"
+      },
+      "gold_sql": "SELECT g.Name AS genre, sum(il.Quantity) AS tracks_sold FROM invoiceline il JOIN track t ON t.TrackId = il.TrackId JOIN genre g ON g.GenreId = t.GenreId GROUP BY genre ORDER BY tracks_sold DESC, genre LIMIT 5",
+      "order_matters": false
+    },
+    {
+      "id": "ch-05",
+      "question": "Which sales support agent has the highest total sales?",
+      "category": "multi-hop join (non-obvious key)",
+      "expected_type": "table",
+      "gold_sql": "SELECT e.FirstName || ' ' || e.LastName AS agent, round(sum(i.Total), 2) AS total_sales FROM employee e JOIN customer c ON c.SupportRepId = e.EmployeeId JOIN invoice i ON i.CustomerId = c.CustomerId GROUP BY agent ORDER BY total_sales DESC LIMIT 1",
+      "order_matters": false,
+      "tolerance": 0.01,
+      "notes": "Needs the SupportRepId -> EmployeeId link, which has no shared column name."
+    },
+    {
+      "id": "ch-06",
+      "question": "Which 5 artists have the most albums?",
+      "category": "join + ranking",
+      "expected_type": "table",
+      "gold_sql": "SELECT ar.Name AS artist, count(*) AS albums FROM album al JOIN artist ar ON ar.ArtistId = al.ArtistId GROUP BY artist ORDER BY albums DESC, artist LIMIT 5",
+      "order_matters": false
+    },
+    {
+      "id": "ch-07",
+      "question": "What is the average track length in minutes for each media type?",
+      "category": "unit conversion",
+      "expected_type": "table",
+      "gold_sql": "SELECT m.Name AS media_type, round(avg(t.Milliseconds) / 60000.0, 2) AS avg_minutes FROM track t JOIN mediatype m ON m.MediaTypeId = t.MediaTypeId GROUP BY media_type ORDER BY avg_minutes DESC",
+      "order_matters": false,
+      "tolerance": 0.01
+    },
+    {
+      "id": "ch-08",
+      "question": "Which genre brings in the most revenue in the USA?",
+      "category": "multi-hop join (4 tables)",
+      "expected_type": "table",
+      "gold_sql": "SELECT g.Name AS genre, round(sum(il.UnitPrice * il.Quantity), 2) AS revenue FROM invoice i JOIN invoiceline il ON il.InvoiceId = i.InvoiceId JOIN track t ON t.TrackId = il.TrackId JOIN genre g ON g.GenreId = t.GenreId WHERE i.BillingCountry = 'USA' GROUP BY genre ORDER BY revenue DESC LIMIT 1",
+      "order_matters": false,
+      "tolerance": 0.01
+    },
+    {
+      "id": "ch-09",
+      "question": "What about Canada?",
+      "category": "follow-up",
+      "context": [
+        "ch-08"
+      ],
+      "expected_type": "table",
+      "gold_sql": "SELECT g.Name AS genre, round(sum(il.UnitPrice * il.Quantity), 2) AS revenue FROM invoice i JOIN invoiceline il ON il.InvoiceId = i.InvoiceId JOIN track t ON t.TrackId = il.TrackId JOIN genre g ON g.GenreId = t.GenreId WHERE i.BillingCountry = 'Canada' GROUP BY genre ORDER BY revenue DESC LIMIT 1",
+      "order_matters": false,
+      "tolerance": 0.01,
+      "notes": "Must carry over the metric and grouping from the previous turn and only change the filter."
+    },
+    {
+      "id": "ch-10",
+      "question": "What is the total revenue from Rock tracks?",
+      "category": "join fan-out trap",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(sum(il.UnitPrice * il.Quantity), 2) AS rock_revenue FROM invoiceline il JOIN track t ON t.TrackId = il.TrackId JOIN genre g ON g.GenreId = t.GenreId WHERE g.Name = 'Rock'",
+      "tolerance": 0.01,
+      "notes": "Summing invoice.Total after joining to invoice lines counts each invoice once per line and inflates the result."
+    },
+    {
+      "id": "ch-11",
+      "question": "How many tracks have never been purchased?",
+      "category": "anti-join",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS never_purchased FROM track t WHERE NOT EXISTS (SELECT 1 FROM invoiceline il WHERE il.TrackId = t.TrackId)"
+    },
+    {
+      "id": "ch-12",
+      "question": "List each employee with the name of their manager.",
+      "category": "self-join",
+      "expected_type": "table",
+      "gold_sql": "SELECT e.FirstName || ' ' || e.LastName AS employee, m.FirstName || ' ' || m.LastName AS manager FROM employee e LEFT JOIN employee m ON m.EmployeeId = e.ReportsTo ORDER BY e.EmployeeId",
+      "order_matters": false,
+      "notes": "",
+      "label_fix": "exp01 review"
+    },
+    {
+      "id": "ch-13",
+      "question": "What was the year-over-year revenue growth?",
+      "category": "window function",
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "year",
+        "y": "growth_pct"
+      },
+      "gold_sql": "SELECT year, revenue, round(100.0 * (revenue - lag(revenue) OVER (ORDER BY year)) / lag(revenue) OVER (ORDER BY year), 2) AS growth_pct FROM (SELECT year(InvoiceDate) AS year, round(sum(Total), 2) AS revenue FROM invoice GROUP BY year) ORDER BY year",
+      "order_matters": false,
+      "tolerance": 0.01,
+      "chart_accept": [
+        "bar",
+        "line"
+      ],
+      "notes": "",
+      "label_fix": "exp01 review"
+    },
+    {
+      "id": "ch-14",
+      "question": "Which playlist has the most tracks?",
+      "category": "many-to-many bridge",
+      "expected_type": "table",
+      "gold_sql": "SELECT p.Name AS playlist, count(*) AS tracks FROM playlisttrack pt JOIN playlist p ON p.PlaylistId = pt.PlaylistId GROUP BY p.PlaylistId, p.Name QUALIFY rank() OVER (ORDER BY count(*) DESC) = 1",
+      "order_matters": false,
+      "notes": "",
+      "label_fix": "exp01 review"
+    },
+    {
+      "id": "ch-15",
+      "question": "Who is our best customer?",
+      "category": "ambiguity",
+      "expected_type": "clarification",
+      "gold_sql": null,
+      "notes": "Best by total spend, by number of invoices, or by recency? Assistant should ask or state its assumption (spend is the sensible default)."
+    },
+    {
+      "id": "ch-16",
+      "question": "How many times was each track streamed last month?",
+      "category": "unanswerable",
+      "expected_type": "refusal",
+      "gold_sql": null,
+      "notes": "There is no streaming/play data, only purchases; the assistant must not substitute purchases silently."
+    }
+  ]
+}

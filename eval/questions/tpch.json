@@ -1,0 +1,201 @@
+{
+  "dataset": "tpch",
+  "description": "TPC-H decision-support benchmark at scale factor 0.01: regions, nations, customers, suppliers, parts, orders, line items (8 CSVs, ~87k rows). Several questions are natural-language versions of official TPC-H queries.",
+  "source": "Generated with DuckDB's tpch extension: CALL dbgen(sf = 0.01)",
+  "license": "TPC-H specification data generator (free to use for benchmarking/evaluation)",
+  "relationships": [
+    {
+      "from": "nation.n_regionkey",
+      "to": "region.r_regionkey",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "customer.c_nationkey",
+      "to": "nation.n_nationkey",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "supplier.s_nationkey",
+      "to": "nation.n_nationkey",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "orders.o_custkey",
+      "to": "customer.c_custkey",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "lineitem.l_orderkey",
+      "to": "orders.o_orderkey",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "lineitem.l_partkey",
+      "to": "part.p_partkey",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "lineitem.l_suppkey",
+      "to": "supplier.s_suppkey",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "partsupp.ps_partkey",
+      "to": "part.p_partkey",
+      "cardinality": "many-to-one"
+    },
+    {
+      "from": "partsupp.ps_suppkey",
+      "to": "supplier.s_suppkey",
+      "cardinality": "many-to-one"
+    }
+  ],
+  "data_notes": [
+    "Column names carry table prefixes (c_custkey, o_custkey), so keys never share an exact name.",
+    "Revenue in TPC-H is l_extendedprice * (1 - l_discount); o_totalprice also includes tax.",
+    "Dates run from 1992-01-01 to 1998-08-02."
+  ],
+  "questions": [
+    {
+      "id": "tp-01",
+      "question": "How many orders were placed in 1995?",
+      "category": "aggregation + date filter",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS orders FROM orders WHERE year(o_orderdate) = 1995"
+    },
+    {
+      "id": "tp-02",
+      "question": "How many customers are in each market segment?",
+      "category": "aggregation",
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "segment",
+        "y": "customers"
+      },
+      "gold_sql": "SELECT c_mktsegment AS segment, count(*) AS customers FROM customer GROUP BY segment ORDER BY customers DESC, segment",
+      "order_matters": false,
+      "notes": "",
+      "label_fix": "exp01 review"
+    },
+    {
+      "id": "tp-03",
+      "question": "Show total revenue per year.",
+      "category": "time series + metric definition",
+      "expected_type": "chart",
+      "chart": {
+        "type": "line",
+        "x": "year",
+        "y": "revenue"
+      },
+      "gold_sql": "SELECT year(o.o_orderdate) AS year, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM lineitem l JOIN orders o ON o.o_orderkey = l.l_orderkey GROUP BY year ORDER BY year",
+      "order_matters": false,
+      "tolerance": 0.01
+    },
+    {
+      "id": "tp-04",
+      "question": "What is the revenue by region?",
+      "category": "multi-hop join (5 tables)",
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "region",
+        "y": "revenue"
+      },
+      "gold_sql": "SELECT r.r_name AS region, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM lineitem l JOIN orders o ON o.o_orderkey = l.l_orderkey JOIN customer c ON c.c_custkey = o.o_custkey JOIN nation n ON n.n_nationkey = c.c_nationkey JOIN region r ON r.r_regionkey = n.n_regionkey GROUP BY region ORDER BY revenue DESC",
+      "order_matters": false,
+      "tolerance": 0.01,
+      "notes": "Region is reached via the customer's nation.",
+      "label_fix": "exp01 review"
+    },
+    {
+      "id": "tp-05",
+      "question": "Which 5 nations had the most revenue from local suppliers in Asia during 1994?",
+      "category": "official TPC-H Q5",
+      "expected_type": "table",
+      "gold_sql": "SELECT n.n_name AS nation, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM customer c JOIN orders o ON c.c_custkey = o.o_custkey JOIN lineitem l ON l.l_orderkey = o.o_orderkey JOIN supplier s ON l.l_suppkey = s.s_suppkey AND c.c_nationkey = s.s_nationkey JOIN nation n ON s.s_nationkey = n.n_nationkey JOIN region r ON n.n_regionkey = r.r_regionkey WHERE r.r_name = 'ASIA' AND o.o_orderdate >= DATE '1994-01-01' AND o.o_orderdate < DATE '1995-01-01' GROUP BY nation ORDER BY revenue DESC LIMIT 5",
+      "order_matters": false,
+      "tolerance": 0.01
+    },
+    {
+      "id": "tp-06",
+      "question": "Summarize quantity, price and average discount of line items shipped on or before 1998-09-02, grouped by return flag and line status.",
+      "category": "official TPC-H Q1",
+      "expected_type": "table",
+      "gold_sql": "SELECT l_returnflag, l_linestatus, sum(l_quantity) AS sum_qty, round(sum(l_extendedprice), 2) AS sum_base_price, round(avg(l_discount), 4) AS avg_disc FROM lineitem WHERE l_shipdate <= DATE '1998-09-02' GROUP BY l_returnflag, l_linestatus ORDER BY l_returnflag, l_linestatus",
+      "order_matters": false,
+      "tolerance": 0.01,
+      "notes": "",
+      "label_fix": "exp01 review"
+    },
+    {
+      "id": "tp-07",
+      "question": "Who are the top 10 customers by total order value?",
+      "category": "join + ranking",
+      "expected_type": "table",
+      "gold_sql": "SELECT c.c_name AS customer, round(sum(o.o_totalprice), 2) AS total_order_value FROM customer c JOIN orders o ON o.o_custkey = c.c_custkey GROUP BY customer ORDER BY total_order_value DESC LIMIT 10",
+      "order_matters": false,
+      "tolerance": 0.01
+    },
+    {
+      "id": "tp-08",
+      "question": "What percentage of line items were received later than their commit date?",
+      "category": "ratio + date comparison",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(100.0 * count(*) FILTER (WHERE l_receiptdate > l_commitdate) / count(*), 2) AS late_pct FROM lineitem",
+      "tolerance": 0.01,
+      "notes": "'Shipped late' is interpreted as received after the committed date.",
+      "label_fix": "exp01 review"
+    },
+    {
+      "id": "tp-09",
+      "question": "Break that down by ship mode.",
+      "category": "follow-up",
+      "context": [
+        "tp-08"
+      ],
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "ship_mode",
+        "y": "late_pct"
+      },
+      "gold_sql": "SELECT l_shipmode AS ship_mode, round(100.0 * count(*) FILTER (WHERE l_receiptdate > l_commitdate) / count(*), 2) AS late_pct FROM lineitem GROUP BY ship_mode ORDER BY late_pct DESC",
+      "order_matters": false,
+      "tolerance": 0.01,
+      "label_fix": "exp01 review"
+    },
+    {
+      "id": "tp-10",
+      "question": "How many customers have never placed an order?",
+      "category": "anti-join",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS customers_without_orders FROM customer c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.o_custkey = c.c_custkey)"
+    },
+    {
+      "id": "tp-11",
+      "question": "What is the average order total?",
+      "category": "join fan-out trap",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(avg(o_totalprice), 2) AS avg_order_total FROM orders",
+      "tolerance": 0.01,
+      "notes": "Joining orders to lineitem before averaging o_totalprice weights orders by their line count."
+    },
+    {
+      "id": "tp-12",
+      "question": "Which suppliers are the most profitable?",
+      "category": "ambiguity",
+      "expected_type": "clarification",
+      "gold_sql": null,
+      "notes": "Profit needs a definition (revenue minus ps_supplycost * quantity?) and a time range; assistant should state assumptions or ask."
+    },
+    {
+      "id": "tp-13",
+      "question": "What was the customer satisfaction score per region?",
+      "category": "unanswerable",
+      "expected_type": "refusal",
+      "gold_sql": null,
+      "notes": "No satisfaction or rating data exists."
+    }
+  ]
+}

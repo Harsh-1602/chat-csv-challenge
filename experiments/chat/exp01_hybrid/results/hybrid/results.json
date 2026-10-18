@@ -1,0 +1,1968 @@
+{
+  "summary": {
+    "execution_accuracy": "35/35",
+    "behaviour": "6/6",
+    "chart_type": "11/11",
+    "per_dataset": {
+      "chinook": "14/14",
+      "jaffle_shop": "10/10",
+      "tpch": "11/11"
+    },
+    "latency_p50_s": 5.9,
+    "latency_max_s": 9.94,
+    "llm_calls": 115,
+    "prompt_tokens": 314744,
+    "completion_tokens": 13301,
+    "variant": "hybrid",
+    "model": "gpt-5.6-terra",
+    "reasoning_effort": "medium",
+    "config": {
+      "understand": true,
+      "max_steps": 4,
+      "repair": true,
+      "narrate": true,
+      "max_rows": 1000,
+      "timeout_s": 30.0
+    },
+    "run_at": "2026-10-17T18:15:22"
+  },
+  "records": [
+    {
+      "id": "js-01",
+      "dataset": "jaffle_shop",
+      "question": "How many customers do we have?",
+      "category": "aggregation",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS customers FROM raw_customers",
+      "gold_preview": "customers\n100\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "How many customers do we have?",
+        "message": "We have 100 customers.",
+        "sql": "SELECT\n  COUNT(DISTINCT id) AS customer_count\nFROM raw_customers",
+        "assumptions": [
+          "Interpret \u201ccustomers\u201d as the number of unique customer records in raw_customers."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "customer_count\n100\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  COUNT(DISTINCT id) AS customer_count\nFROM raw_customers",
+            "detail": "customer_count\n100\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 6.86,
+      "llm_calls": 3,
+      "prompt_tokens": 4561,
+      "completion_tokens": 166
+    },
+    {
+      "id": "js-02",
+      "dataset": "jaffle_shop",
+      "question": "How many orders are there in each status?",
+      "category": "aggregation",
+      "expected_type": "chart",
+      "gold_sql": "SELECT status, count(*) AS orders FROM raw_orders GROUP BY status ORDER BY orders DESC, status",
+      "gold_preview": "status | orders\ncompleted | 67\nplaced | 13\nshipped | 13\nreturned | 4\nreturn_pending | 2\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "How many orders are there in each order status?",
+        "message": "There are 67 completed orders, 13 placed orders, 13 shipped orders, 4 returned orders, and 2 return-pending orders.\n\n- Completed is the most common status.\n- Placed and shipped are tied at 13 orders each.",
+        "sql": "SELECT\n  status AS order_status,\n  COUNT(DISTINCT id) AS order_count\nFROM raw_orders\nGROUP BY status\nORDER BY order_status",
+        "assumptions": [
+          "Count distinct order IDs, grouped by the current order status."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "order_status",
+          "y": [
+            "order_count"
+          ],
+          "series": null,
+          "title": "Orders by Status"
+        },
+        "result_preview": "order_status | order_count\ncompleted | 67\nplaced | 13\nreturn_pending | 2\nreturned | 4\nshipped | 13\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  status AS order_status,\n  COUNT(DISTINCT id) AS order_count\nFROM raw_orders\nGROUP BY status\nORDER BY order_status",
+            "detail": "order_status | order_count\ncompleted | 67\nplaced | 13\nreturn_pending | 2\nreturned | 4\nshipped | 13\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.7,
+      "llm_calls": 3,
+      "prompt_tokens": 4589,
+      "completion_tokens": 231
+    },
+    {
+      "id": "js-03",
+      "dataset": "jaffle_shop",
+      "question": "What is the total amount paid in dollars, by payment method?",
+      "category": "aggregation",
+      "expected_type": "table",
+      "gold_sql": "SELECT payment_method, sum(amount) / 100.0 AS total_dollars FROM raw_payments GROUP BY payment_method ORDER BY total_dollars DESC",
+      "gold_preview": "payment_method | total_dollars\ncredit_card | 871.0\nbank_transfer | 411.0\ngift_card | 205.0\ncoupon | 185.0\n(4 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What is the total amount paid in dollars, by payment method?",
+        "message": "Total amount paid by payment method: credit card $871.0, bank transfer $411.0, gift card $205.0, and coupon $185.0.\n\n- Credit card had the highest total paid.\n- Coupon had the lowest total paid.",
+        "sql": "SELECT\n  payment_method,\n  ROUND(SUM(amount) / 100.0, 2) AS total_amount_paid_usd\nFROM raw_payments\nGROUP BY payment_method\nORDER BY total_amount_paid_usd DESC, payment_method",
+        "assumptions": [
+          "Total amount paid is calculated as the sum of payment transaction amounts, converted from cents to U.S. dollars, grouped by payment method."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "payment_method",
+          "y": [
+            "total_amount_paid_usd"
+          ],
+          "series": null,
+          "title": "Total Amount Paid by Payment Method"
+        },
+        "result_preview": "payment_method | total_amount_paid_usd\ncredit_card | 871.0\nbank_transfer | 411.0\ngift_card | 205.0\ncoupon | 185.0\n(4 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  payment_method,\n  ROUND(SUM(amount) / 100.0, 2) AS total_amount_paid_usd\nFROM raw_payments\nGROUP BY payment_method\nORDER BY total_amount_paid_usd DESC, payment_method",
+            "detail": "payment_method | total_amount_paid_usd\ncredit_card | 871.0\nbank_transfer | 411.0\ngift_card | 205.0\ncoupon | 185.0\n(4 rows)"
+          }
+        ]
+      },
+      "latency_s": 7.37,
+      "llm_calls": 3,
+      "prompt_tokens": 4636,
+      "completion_tokens": 280
+    },
+    {
+      "id": "js-04",
+      "dataset": "jaffle_shop",
+      "question": "Who are the top 5 customers by total amount paid?",
+      "category": "multi-hop join + ranking",
+      "expected_type": "table",
+      "gold_sql": "SELECT c.id, c.first_name, c.last_name, sum(p.amount) / 100.0 AS total_paid FROM raw_customers c JOIN raw_orders o ON o.user_id = c.id JOIN raw_payments p ON p.order_id = o.id GROUP BY ALL ORDER BY total_paid DESC, c.id LIMIT 5",
+      "gold_preview": "id | first_name | last_name | total_paid\n51 | Howard | R. | 99.0\n3 | Kathleen | P. | 65.0\n46 | Norma | C. | 64.0\n30 | Christina | W. | 57.0\n54 | Rose | M. | 57.0\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Who are the top 5 customers by total amount paid?",
+        "message": "The top customer by total amount paid is Howard R. (customer 51) with $99.00. Kathleen P. (customer 3) is second with $65.00, followed by Norma C. (customer 46) at $64.00.\n\n- Christina W. (customer 30) and Rose M. (customer 54) are tied at $57.00.\n- The ranking includes customer IDs to distinguish customers with similar names.",
+        "sql": "WITH payments_by_order AS (\n  SELECT\n    order_id,\n    SUM(amount) / 100.0 AS order_payment_amount_usd\n  FROM raw_payments\n  GROUP BY order_id\n), customer_payment_totals AS (\n  SELECT\n    c.id AS customer_id,\n    c.first_name,\n    c.last_name,\n    SUM(p.order_payment_amount_usd) AS total_amount_paid_usd\n  FROM raw_customers AS c\n  JOIN raw_orders AS o\n    ON o.user_id = c.id\n  JOIN payments_by_order AS p\n    ON p.order_id = o.id\n  GROUP BY\n    c.id,\n    c.first_name,\n    c.last_name\n)\nSELECT\n  customer_id,\n  first_name,\n  last_name,\n  ROUND(total_amount_paid_usd, 2) AS total_amount_paid_usd\nFROM customer_payment_totals\nORDER BY total_amount_paid_usd DESC, customer_id\nLIMIT 5",
+        "assumptions": [
+          "Rank customers by the sum of all recorded payment transaction amounts on their orders, converted from cents to USD, in descending order.",
+          "Identify customers by first name, last-name initial, and customer ID to avoid ambiguity."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "table",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": "Top 5 Customers by Total Amount Paid"
+        },
+        "result_preview": "customer_id | first_name | last_name | total_amount_paid_usd\n51 | Howard | R. | 99.0\n3 | Kathleen | P. | 65.0\n46 | Norma | C. | 64.0\n30 | Christina | W. | 57.0\n54 | Rose | M. | 57.0\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH payments_by_order AS (\n  SELECT\n    order_id,\n    SUM(amount) / 100.0 AS order_payment_amount_usd\n  FROM raw_payments\n  GROUP BY order_id\n), customer_payment_totals AS (\n  SELECT\n    c.id AS customer_id,\n    c.first_name,\n    c.last_name,\n    SUM(p.order_payment_amount_usd) AS total_amount_paid_usd\n  FROM raw_customers AS c\n  JOIN raw_orders AS o\n    ON o.user_id = c.id\n  JOIN payments_by_order AS p\n    ON p.order_id = o.id\n  GROUP BY\n    c.id,\n    c.first_name,\n    c.last_name\n)\nSELECT\n  customer_id,\n  first_name,\n  last_name,\n  ROUND(total_amount_paid_usd, 2) AS total_amount_paid_usd\nFROM customer_payment_totals\nORDER BY total_amount_paid_usd DESC, customer_id\nLIMIT 5",
+            "detail": "customer_id | first_name | last_name | total_amount_paid_usd\n51 | Howard | R. | 99.0\n3 | Kathleen | P. | 65.0\n46 | Norma | C. | 64.0\n30 | Christina | W. | 57.0\n54 | Rose | M. | 57.0\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 8.02,
+      "llm_calls": 3,
+      "prompt_tokens": 4702,
+      "completion_tokens": 616
+    },
+    {
+      "id": "js-05",
+      "dataset": "jaffle_shop",
+      "question": "Show the number of orders per week.",
+      "category": "time series",
+      "expected_type": "chart",
+      "gold_sql": "SELECT date_trunc('week', order_date) AS week, count(*) AS orders FROM raw_orders GROUP BY week ORDER BY week",
+      "gold_preview": "week | orders\n2018-01-01T00:00:00 | 6\n2018-01-08T00:00:00 | 5\n2018-01-15T00:00:00 | 7\n2018-01-22T00:00:00 | 8\n2018-01-29T00:00:00 | 7\n2018-02-05T00:00:00 | 6\n2018-02-12T00:00:00 | 6\n2018-02-19T00:00:00 | 7\n2018-02-26T00:00:00 | 9\n2018-03-05T00:00:00 | 8\n(15 rows, first 10 shown)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Show the number of orders per week.",
+        "message": "Weekly order counts ranged from 1 to 9 across the 15 reported weeks, peaking in the week starting 2018-02-26.\n\n- Counts were generally between 5 and 8 orders per week.\n- The week starting 2018-04-09 had the lowest count, with 1 order.\n- Several weeks had 8 orders, including those starting 2018-01-22, 2018-03-05, 2018-03-19, and 2018-03-26.",
+        "sql": "SELECT\n  date_trunc('week', order_date)::DATE AS week_start,\n  COUNT(DISTINCT id) AS order_count\nFROM raw_orders\nGROUP BY 1\nORDER BY 1",
+        "assumptions": [
+          "Count distinct order IDs, grouped by week using order_date.",
+          "Use the order date for the weekly grouping; weeks follow the database's calendar-week convention."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "line",
+          "x": "week_start",
+          "y": [
+            "order_count"
+          ],
+          "series": null,
+          "title": "Orders per Week"
+        },
+        "result_preview": "week_start | order_count\n2018-01-01 | 6\n2018-01-08 | 5\n2018-01-15 | 7\n2018-01-22 | 8\n2018-01-29 | 7\n2018-02-05 | 6\n2018-02-12 | 6\n2018-02-19 | 7\n2018-02-26 | 9\n2018-03-05 | 8\n(15 rows, first 10 shown)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  date_trunc('week', order_date)::DATE AS week_start,\n  COUNT(DISTINCT id) AS order_count\nFROM raw_orders\nGROUP BY 1\nORDER BY 1",
+            "detail": "week_start | order_count\n2018-01-01 | 6\n2018-01-08 | 5\n2018-01-15 | 7\n2018-01-22 | 8\n2018-01-29 | 7\n(15 rows, first 5 shown)"
+          }
+        ]
+      },
+      "latency_s": 7.59,
+      "llm_calls": 3,
+      "prompt_tokens": 4767,
+      "completion_tokens": 328
+    },
+    {
+      "id": "js-06",
+      "dataset": "jaffle_shop",
+      "question": "How many customers have never placed an order?",
+      "category": "anti-join",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS customers_without_orders FROM raw_customers c WHERE NOT EXISTS (SELECT 1 FROM raw_orders o WHERE o.user_id = c.id)",
+      "gold_preview": "customers_without_orders\n38\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "How many customers have never placed an order?",
+        "message": "38 customers have never placed an order.",
+        "sql": "SELECT COUNT(*) AS customers_never_placed_an_order\nFROM raw_customers c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM raw_orders o\n  WHERE o.user_id = c.id\n)",
+        "assumptions": [
+          "A customer is considered to have never placed an order if their customer ID does not appear in raw_orders.user_id."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "customers_never_placed_an_order\n38\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT COUNT(*) AS customers_never_placed_an_order\nFROM raw_customers c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM raw_orders o\n  WHERE o.user_id = c.id\n)",
+            "detail": "customers_never_placed_an_order\n38\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 7.37,
+      "llm_calls": 3,
+      "prompt_tokens": 4586,
+      "completion_tokens": 215
+    },
+    {
+      "id": "js-07",
+      "dataset": "jaffle_shop",
+      "question": "What is the average order value in dollars?",
+      "category": "join fan-out trap",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT avg(order_total) AS avg_order_value FROM (SELECT o.id, sum(p.amount) / 100.0 AS order_total FROM raw_orders o JOIN raw_payments p ON p.order_id = o.id GROUP BY o.id)",
+      "gold_preview": "avg_order_value\n16.88888888888889\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What is the average order value in dollars?",
+        "message": "The average order value is $16.89.",
+        "sql": "SELECT\n  ROUND(SUM(amount) / 100.0 / COUNT(DISTINCT order_id), 2) AS average_order_value_usd\nFROM raw_payments",
+        "assumptions": [
+          "Average order value is calculated as total recorded payment amount divided by the number of distinct orders with at least one payment transaction, reported in U.S. dollars."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "average_order_value_usd\n16.89\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  ROUND(SUM(amount) / 100.0 / COUNT(DISTINCT order_id), 2) AS average_order_value_usd\nFROM raw_payments",
+            "detail": "average_order_value_usd\n16.89\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 4.98,
+      "llm_calls": 3,
+      "prompt_tokens": 4602,
+      "completion_tokens": 212
+    },
+    {
+      "id": "js-08",
+      "dataset": "jaffle_shop",
+      "question": "Which orders were paid with more than one payment method?",
+      "category": "group filter",
+      "expected_type": "table",
+      "gold_sql": "SELECT order_id, count(DISTINCT payment_method) AS methods FROM raw_payments GROUP BY order_id HAVING count(DISTINCT payment_method) > 1 ORDER BY order_id",
+      "gold_preview": "order_id | methods\n9 | 2\n13 | 2\n25 | 3\n54 | 2\n58 | 2\n67 | 2\n77 | 2\n87 | 2\n92 | 2\n(9 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Which orders have payment transactions using more than one distinct payment method?",
+        "message": "9 orders have payment transactions using more than one distinct payment method. Order 25 is the only order with 3 methods; all other listed orders have 2.\n\n- Orders 9, 13, 54, 67, and 77 use bank transfer and credit card.\n- Orders 58 and 87 include gift cards; orders 92 and 25 include coupons.\n- Most are completed; order 77 is shipped, while orders 87 and 92 are placed.",
+        "sql": "WITH payment_methods_by_order AS (\n  SELECT\n    order_id,\n    COUNT(DISTINCT payment_method) AS distinct_payment_method_count,\n    STRING_AGG(DISTINCT payment_method, ', ' ORDER BY payment_method) AS payment_methods,\n    COUNT(*) AS payment_transaction_count\n  FROM raw_payments\n  GROUP BY order_id\n  HAVING COUNT(DISTINCT payment_method) >= 2\n)\nSELECT\n  o.id AS order_id,\n  o.order_date,\n  o.status AS order_status,\n  c.id AS customer_id,\n  c.first_name || ' ' || c.last_name AS customer_name,\n  p.payment_methods,\n  p.distinct_payment_method_count,\n  p.payment_transaction_count\nFROM payment_methods_by_order AS p\nJOIN raw_orders AS o\n  ON o.id = p.order_id\nJOIN raw_customers AS c\n  ON c.id = o.user_id\nORDER BY o.order_date, o.id",
+        "assumptions": [
+          "An order is considered paid with more than one payment method when it has payment records with at least two distinct payment_method values."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "table",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": "Orders Using Multiple Payment Methods"
+        },
+        "result_preview": "order_id | order_date | order_status | customer_id | customer_name | payment_methods | distinct_payment_method_count | payment_transaction_count\n9 | 2018-01-12 | completed | 53 | Anne B. | bank_transfer, gift_card | 2 | 2\n13 | 2018-01-17 | completed | 84 | Christina R. | bank_transfer, credit_card | 2 | 2\n25 | 2018-01-28 | completed | 51 | Howard R. | bank_transfer, coupon, credit_card | 3 | 3\n54 | 2018-02-26 | completed | 54 | Rose M. | bank_transfer, credit_card | 2 | 2\n58 | 2018-03-01 | completed | 22 | Sean H. | coupon, gift_card | 2 | 2\n67 | 2018-03-11 | completed | 79 | Jack R. | bank_transfer, credit_card | 2 | 2\n77 | 2018-03-21 | shipped | 35 | Sara T. | bank_transfer, credit_card | 2 | 2\n87 | 2018-03-27 | placed | 46 | Norma C. | credit_card, gift_card | 2 | 2\n92 | 2018-04-02 | placed | 84 | Christina R. | bank_transfer, coupon | 2 | 2\n(9 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH payment_methods_by_order AS (\n  SELECT\n    order_id,\n    COUNT(DISTINCT payment_method) AS distinct_payment_method_count,\n    STRING_AGG(DISTINCT payment_method, ', ' ORDER BY payment_method) AS payment_methods,\n    COUNT(*) AS payment_transaction_count\n  FROM raw_payments\n  GROUP BY order_id\n  HAVING COUNT(DISTINCT payment_method) >= 2\n)\nSELECT\n  o.id AS order_id,\n  o.order_date,\n  o.status AS order_status,\n  c.id AS customer_id,\n  c.first_name || ' ' || c.last_name AS customer_name,\n  p.payment_methods,\n  p.distinct_payment_method_count,\n  p.payment_transaction_count\nFROM payment_methods_by_order AS p\nJOIN raw_orders AS o\n  ON o.id = p.order_id\nJOIN raw_customers AS c\n  ON c.id = o.user_id\nORDER BY o.order_date, o.id",
+            "detail": "order_id | order_date | order_status | customer_id | customer_name | payment_methods | distinct_payment_method_count | payment_transaction_count\n9 | 2018-01-12 | completed | 53 | Anne B. | bank_transfer, gift_card | 2 | 2\n13 | 2018-01-17 | completed | 84 | Christina R. | bank_transfer, credit_card | 2 | 2\n25 | 2018-01-28 | completed | 51 | Howard R. | bank_transfer, coupon, credit_card | 3 | 3\n54 | 2018-02-26 | completed | 54 | Rose M. | bank_transfer, credit_card | 2 | 2\n58 | 2018-03-01 | completed | 22 | Sean H. | coupon, gift_card | 2 | 2\n(9 rows, first 5 shown)"
+          }
+        ]
+      },
+      "latency_s": 7.29,
+      "llm_calls": 3,
+      "prompt_tokens": 4896,
+      "completion_tokens": 558
+    },
+    {
+      "id": "js-09",
+      "dataset": "jaffle_shop",
+      "question": "What share of orders were returned or are pending return?",
+      "category": "ratio",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(100.0 * count(*) FILTER (WHERE status IN ('returned', 'return_pending')) / count(*), 2) AS returned_pct FROM raw_orders",
+      "gold_preview": "returned_pct\n6.06\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What share of all orders have a status of either 'returned' or 'return_pending'?",
+        "message": "6.06% of all distinct orders have a status of either 'returned' or 'return_pending'.",
+        "sql": "SELECT\n  ROUND(\n    100.0 * COUNT(DISTINCT CASE WHEN status IN ('returned', 'return_pending') THEN id END)\n    / NULLIF(COUNT(DISTINCT id), 0),\n    2\n  ) AS returned_or_pending_return_order_share_pct\nFROM raw_orders",
+        "assumptions": [
+          "\u201cReturned or pending return\u201d is defined using raw_orders.status values 'returned' and 'return_pending'.",
+          "The share is calculated as distinct orders with either status divided by all distinct orders."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "returned_or_pending_return_order_share_pct\n6.06\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  ROUND(\n    100.0 * COUNT(DISTINCT CASE WHEN status IN ('returned', 'return_pending') THEN id END)\n    / NULLIF(COUNT(DISTINCT id), 0),\n    2\n  ) AS returned_or_pending_return_order_share_pct\nFROM raw_orders",
+            "detail": "returned_or_pending_return_order_share_pct\n6.06\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.18,
+      "llm_calls": 3,
+      "prompt_tokens": 4642,
+      "completion_tokens": 279
+    },
+    {
+      "id": "js-10",
+      "dataset": "jaffle_shop",
+      "question": "And how does that break down by month?",
+      "category": "follow-up",
+      "expected_type": "chart",
+      "gold_sql": "SELECT date_trunc('month', order_date) AS month, round(100.0 * count(*) FILTER (WHERE status IN ('returned', 'return_pending')) / count(*), 2) AS returned_pct FROM raw_orders GROUP BY month ORDER BY month",
+      "gold_preview": "month | returned_pct\n2018-01-01T00:00:00 | 17.24\n2018-02-01T00:00:00 | 3.7\n2018-03-01T00:00:00 | 0.0\n2018-04-01T00:00:00 | 0.0\n(4 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What share of all distinct orders had a status of either 'returned' or 'return_pending', broken down by order month?",
+        "message": "The share of distinct orders with status 'returned' or 'return_pending' was highest in January 2018 at 17.24%, then fell to 3.7% in February and 0.0% in March and April.\n\n- January 2018 had the highest returned/pending-return order share.\n- No such orders were recorded in March or April 2018.",
+        "sql": "SELECT\n  date_trunc('month', order_date)::DATE AS order_month,\n  ROUND(\n    100.0 * COUNT(DISTINCT CASE WHEN status IN ('returned', 'return_pending') THEN id END)\n    / NULLIF(COUNT(DISTINCT id), 0),\n    2\n  ) AS returned_or_pending_return_order_share_pct\nFROM raw_orders\nGROUP BY 1\nORDER BY 1",
+        "assumptions": [
+          "Group orders by the month of their order_date.",
+          "For each month, calculate returned or pending-return orders as a percentage of all distinct orders placed that month."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "line",
+          "x": "order_month",
+          "y": [
+            "returned_or_pending_return_order_share_pct"
+          ],
+          "series": null,
+          "title": "Monthly Share of Orders Returned or Pending Return"
+        },
+        "result_preview": "order_month | returned_or_pending_return_order_share_pct\n2018-01-01 | 17.24\n2018-02-01 | 3.7\n2018-03-01 | 0.0\n2018-04-01 | 0.0\n(4 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  date_trunc('month', order_date)::DATE AS order_month,\n  ROUND(\n    100.0 * COUNT(DISTINCT CASE WHEN status IN ('returned', 'return_pending') THEN id END)\n    / NULLIF(COUNT(DISTINCT id), 0),\n    2\n  ) AS returned_or_pending_return_order_share_pct\nFROM raw_orders\nGROUP BY 1\nORDER BY 1",
+            "detail": "order_month | returned_or_pending_return_order_share_pct\n2018-01-01 | 17.24\n2018-02-01 | 3.7\n2018-03-01 | 0.0\n2018-04-01 | 0.0\n(4 rows)"
+          }
+        ]
+      },
+      "latency_s": 6.56,
+      "llm_calls": 3,
+      "prompt_tokens": 4993,
+      "completion_tokens": 377
+    },
+    {
+      "id": "js-11",
+      "dataset": "jaffle_shop",
+      "question": "What was our revenue?",
+      "category": "ambiguity",
+      "expected_type": "clarification",
+      "gold_sql": null,
+      "gold_preview": null,
+      "score": {
+        "status": "answered",
+        "pass": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What was our total revenue?",
+        "message": "Total revenue was $1,672.00.",
+        "sql": "SELECT ROUND(SUM(amount) / 100.0, 2) AS total_revenue_usd\nFROM raw_payments",
+        "assumptions": [
+          "Revenue is defined as the total recorded payment transaction amount, converted from cents to U.S. dollars, across the full dataset."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "total_revenue_usd\n1672.0\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT ROUND(SUM(amount) / 100.0, 2) AS total_revenue_usd\nFROM raw_payments",
+            "detail": "total_revenue_usd\n1672.0\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 4.41,
+      "llm_calls": 3,
+      "prompt_tokens": 4581,
+      "completion_tokens": 193
+    },
+    {
+      "id": "js-12",
+      "dataset": "jaffle_shop",
+      "question": "What is the profit margin per product?",
+      "category": "unanswerable",
+      "expected_type": "refusal",
+      "gold_sql": null,
+      "gold_preview": null,
+      "score": {
+        "status": "refuse",
+        "pass": true
+      },
+      "answer": {
+        "status": "refuse",
+        "standalone_question": "What is the profit margin per product?",
+        "message": "This dataset does not include products, product-level order details, costs, or profit measures, so profit margin per product cannot be calculated. It can answer payment revenue by order, customer, payment method, order status, or order date, but not product profitability.",
+        "sql": null,
+        "assumptions": [],
+        "warnings": [],
+        "notes": [],
+        "presentation": null,
+        "result_preview": null,
+        "steps": []
+      },
+      "latency_s": 2.02,
+      "llm_calls": 1,
+      "prompt_tokens": 1944,
+      "completion_tokens": 95
+    },
+    {
+      "id": "ch-01",
+      "dataset": "chinook",
+      "question": "How many tracks are in the catalog?",
+      "category": "aggregation",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS tracks FROM track",
+      "gold_preview": "tracks\n3503\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "How many tracks are in the catalog?",
+        "message": "The catalog contains 3,503 tracks.",
+        "sql": "SELECT\n  COUNT(\"TrackId\") AS catalog_track_count\nFROM track",
+        "assumptions": [
+          "Interpret \u201ccatalog\u201d as all records in the track table."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "catalog_track_count\n3503\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  COUNT(\"TrackId\") AS catalog_track_count\nFROM track",
+            "detail": "catalog_track_count\n3503\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 4.87,
+      "llm_calls": 3,
+      "prompt_tokens": 9436,
+      "completion_tokens": 170
+    },
+    {
+      "id": "ch-02",
+      "dataset": "chinook",
+      "question": "Which 10 countries generate the most revenue?",
+      "category": "aggregation + ranking",
+      "expected_type": "chart",
+      "gold_sql": "SELECT BillingCountry AS country, round(sum(Total), 2) AS revenue FROM invoice GROUP BY country ORDER BY revenue DESC, country LIMIT 10",
+      "gold_preview": "country | revenue\nUSA | 523.06\nCanada | 303.96\nFrance | 195.1\nBrazil | 190.1\nGermany | 156.48\nUnited Kingdom | 112.86\nCzech Republic | 90.24\nPortugal | 77.24\nIndia | 75.26\nChile | 46.62\n(10 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Which 10 countries generate the most revenue?",
+        "message": "The USA generates the most revenue at $523.06, followed by Canada at $303.96 and France at $195.10.\n\n- Brazil and Germany rank next, with $190.10 and $156.48.\n- The remaining top-10 countries are the United Kingdom, Czech Republic, Portugal, India, and Chile.\n- Chile ranks tenth with $46.62.",
+        "sql": "SELECT\n  \"BillingCountry\" AS billing_country,\n  ROUND(SUM(\"Total\"), 2) AS total_revenue\nFROM invoice\nGROUP BY \"BillingCountry\"\nORDER BY total_revenue DESC\nLIMIT 10",
+        "assumptions": [
+          "Revenue is defined as total invoice revenue (SUM(invoice.Total)) in USD.",
+          "Countries are based on the transaction-time billing country (invoice.BillingCountry).",
+          "Rank countries by revenue in descending order and return the top 10."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "billing_country",
+          "y": [
+            "total_revenue"
+          ],
+          "series": null,
+          "title": "Top 10 Countries by Invoice Revenue (USD)"
+        },
+        "result_preview": "billing_country | total_revenue\nUSA | 523.06\nCanada | 303.96\nFrance | 195.1\nBrazil | 190.1\nGermany | 156.48\nUnited Kingdom | 112.86\nCzech Republic | 90.24\nPortugal | 77.24\nIndia | 75.26\nChile | 46.62\n(10 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  \"BillingCountry\" AS billing_country,\n  ROUND(SUM(\"Total\"), 2) AS total_revenue\nFROM invoice\nGROUP BY \"BillingCountry\"\nORDER BY total_revenue DESC\nLIMIT 10",
+            "detail": "billing_country | total_revenue\nUSA | 523.06\nCanada | 303.96\nFrance | 195.1\nBrazil | 190.1\nGermany | 156.48\n(10 rows, first 5 shown)"
+          }
+        ]
+      },
+      "latency_s": 6.71,
+      "llm_calls": 3,
+      "prompt_tokens": 9584,
+      "completion_tokens": 325
+    },
+    {
+      "id": "ch-03",
+      "dataset": "chinook",
+      "question": "Show monthly revenue for 2013.",
+      "category": "time series",
+      "expected_type": "chart",
+      "gold_sql": "SELECT date_trunc('month', InvoiceDate) AS month, round(sum(Total), 2) AS revenue FROM invoice WHERE year(InvoiceDate) = 2013 GROUP BY month ORDER BY month",
+      "gold_preview": "month | revenue\n2013-01-01T00:00:00 | 37.62\n2013-02-01T00:00:00 | 27.72\n2013-03-01T00:00:00 | 37.62\n2013-04-01T00:00:00 | 33.66\n2013-05-01T00:00:00 | 37.62\n2013-06-01T00:00:00 | 37.62\n2013-07-01T00:00:00 | 37.62\n2013-08-01T00:00:00 | 37.62\n2013-09-01T00:00:00 | 37.62\n2013-10-01T00:00:00 | 37.62\n(12 rows, first 10 shown)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Show monthly revenue for 2013.",
+        "message": "Monthly revenue in 2013 was mostly $37.62. It ranged from $27.72 in February to $49.62 in November.\n\n- January: $37.62; February: $27.72; March: $37.62; April: $33.66\n- May through October: $37.62 each month\n- November: $49.62; December: $38.62 (partial month)",
+        "sql": "SELECT\n  DATE_TRUNC('month', InvoiceDate) AS invoice_month,\n  ROUND(SUM(Total), 2) AS monthly_revenue\nFROM invoice\nWHERE InvoiceDate >= TIMESTAMP '2013-01-01 00:00:00'\n  AND InvoiceDate < TIMESTAMP '2014-01-01 00:00:00'\nGROUP BY 1\nORDER BY 1",
+        "assumptions": [
+          "Revenue means total billed invoice revenue in USD, calculated as SUM(invoice.Total).",
+          "Months are based on invoice issue date (invoice.InvoiceDate).",
+          "The dataset contains invoices through 2013-12-22, so December 2013 is partial.",
+          "December 2013 is partial because the latest invoice date in the data is 2013-12-22."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "line",
+          "x": "invoice_month",
+          "y": [
+            "monthly_revenue"
+          ],
+          "series": null,
+          "title": "Monthly Invoice Revenue in 2013 (USD)"
+        },
+        "result_preview": "invoice_month | monthly_revenue\n2013-01-01T00:00:00 | 37.62\n2013-02-01T00:00:00 | 27.72\n2013-03-01T00:00:00 | 37.62\n2013-04-01T00:00:00 | 33.66\n2013-05-01T00:00:00 | 37.62\n2013-06-01T00:00:00 | 37.62\n2013-07-01T00:00:00 | 37.62\n2013-08-01T00:00:00 | 37.62\n2013-09-01T00:00:00 | 37.62\n2013-10-01T00:00:00 | 37.62\n(12 rows, first 10 shown)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  DATE_TRUNC('month', InvoiceDate) AS invoice_month,\n  ROUND(SUM(Total), 2) AS monthly_revenue\nFROM invoice\nWHERE InvoiceDate >= TIMESTAMP '2013-01-01 00:00:00'\n  AND InvoiceDate < TIMESTAMP '2014-01-01 00:00:00'\nGROUP BY 1\nORDER BY 1",
+            "detail": "invoice_month | monthly_revenue\n2013-01-01T00:00:00 | 37.62\n2013-02-01T00:00:00 | 27.72\n2013-03-01T00:00:00 | 37.62\n2013-04-01T00:00:00 | 33.66\n2013-05-01T00:00:00 | 37.62\n(12 rows, first 5 shown)"
+          }
+        ]
+      },
+      "latency_s": 6.16,
+      "llm_calls": 3,
+      "prompt_tokens": 9788,
+      "completion_tokens": 421
+    },
+    {
+      "id": "ch-04",
+      "dataset": "chinook",
+      "question": "What are the top 5 genres by number of tracks sold?",
+      "category": "join + ranking",
+      "expected_type": "chart",
+      "gold_sql": "SELECT g.Name AS genre, sum(il.Quantity) AS tracks_sold FROM invoiceline il JOIN track t ON t.TrackId = il.TrackId JOIN genre g ON g.GenreId = t.GenreId GROUP BY genre ORDER BY tracks_sold DESC, genre LIMIT 5",
+      "gold_preview": "genre | tracks_sold\nRock | 835\nLatin | 386\nMetal | 264\nAlternative & Punk | 244\nJazz | 80\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What are the top 5 genres by number of tracks sold?",
+        "message": "Rock is the top genre by tracks sold, with 835 units. Latin and Metal follow with 386 and 264 units, respectively.\n\n- Alternative & Punk ranks fourth with 244 tracks sold.\n- Jazz ranks fifth with 80 tracks sold.",
+        "sql": "SELECT\n  g.\"GenreId\" AS genre_id,\n  g.\"Name\" AS genre_name,\n  SUM(il.\"Quantity\") AS tracks_sold\nFROM invoiceline AS il\nJOIN track AS t\n  ON il.\"TrackId\" = t.\"TrackId\"\nJOIN genre AS g\n  ON t.\"GenreId\" = g.\"GenreId\"\nGROUP BY\n  g.\"GenreId\",\n  g.\"Name\"\nORDER BY tracks_sold DESC, genre_name ASC\nLIMIT 5",
+        "assumptions": [
+          "\u201cTracks sold\u201d is calculated as the sum of invoice-line quantities, grouped by each track's genre.",
+          "Rank genres in descending order of units sold and return the top five."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "genre_name",
+          "y": [
+            "genre_id",
+            "tracks_sold"
+          ],
+          "series": null,
+          "title": "Top 5 Genres by Tracks Sold"
+        },
+        "result_preview": "genre_id | genre_name | tracks_sold\n1 | Rock | 835\n7 | Latin | 386\n3 | Metal | 264\n4 | Alternative & Punk | 244\n2 | Jazz | 80\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  g.\"GenreId\" AS genre_id,\n  g.\"Name\" AS genre_name,\n  SUM(il.\"Quantity\") AS tracks_sold\nFROM invoiceline AS il\nJOIN track AS t\n  ON il.\"TrackId\" = t.\"TrackId\"\nJOIN genre AS g\n  ON t.\"GenreId\" = g.\"GenreId\"\nGROUP BY\n  g.\"GenreId\",\n  g.\"Name\"\nORDER BY tracks_sold DESC, genre_name ASC\nLIMIT 5",
+            "detail": "genre_id | genre_name | tracks_sold\n1 | Rock | 835\n7 | Latin | 386\n3 | Metal | 264\n4 | Alternative & Punk | 244\n2 | Jazz | 80\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 7.83,
+      "llm_calls": 3,
+      "prompt_tokens": 9541,
+      "completion_tokens": 345
+    },
+    {
+      "id": "ch-05",
+      "dataset": "chinook",
+      "question": "Which sales support agent has the highest total sales?",
+      "category": "multi-hop join (non-obvious key)",
+      "expected_type": "table",
+      "gold_sql": "SELECT e.FirstName || ' ' || e.LastName AS agent, round(sum(i.Total), 2) AS total_sales FROM employee e JOIN customer c ON c.SupportRepId = e.EmployeeId JOIN invoice i ON i.CustomerId = c.CustomerId GROUP BY agent ORDER BY total_sales DESC LIMIT 1",
+      "gold_preview": "agent | total_sales\nJane Peacock | 833.04\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Which sales support agent has the highest total sales?",
+        "message": "Jane Peacock has the highest total sales among Sales Support Agents, with $833.04 in invoice revenue.\n\n- Employee ID: 3",
+        "sql": "WITH agent_sales AS (\n  SELECT\n    e.EmployeeId AS employee_id,\n    e.FirstName || ' ' || e.LastName AS sales_support_agent,\n    SUM(i.Total) AS total_sales\n  FROM invoice AS i\n  JOIN customer AS c\n    ON i.CustomerId = c.CustomerId\n  JOIN employee AS e\n    ON c.SupportRepId = e.EmployeeId\n  WHERE e.Title = 'Sales Support Agent'\n  GROUP BY\n    e.EmployeeId,\n    e.FirstName,\n    e.LastName\n)\nSELECT\n  employee_id,\n  sales_support_agent,\n  ROUND(total_sales, 2) AS total_sales_usd\nFROM agent_sales\nQUALIFY RANK() OVER (ORDER BY total_sales DESC) = 1\nORDER BY total_sales DESC, sales_support_agent",
+        "assumptions": [
+          "Interpret total sales as invoice revenue: SUM(invoice.Total) in USD, attributed to each customer's assigned support representative.",
+          "Include only employees whose Title is 'Sales Support Agent'."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "table",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": "Sales Support Agent(s) With the Highest Total Sales"
+        },
+        "result_preview": "employee_id | sales_support_agent | total_sales_usd\n3 | Jane Peacock | 833.04\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH agent_sales AS (\n  SELECT\n    e.EmployeeId AS employee_id,\n    e.FirstName || ' ' || e.LastName AS sales_support_agent,\n    SUM(i.Total) AS total_sales\n  FROM invoice AS i\n  JOIN customer AS c\n    ON i.CustomerId = c.CustomerId\n  JOIN employee AS e\n    ON c.SupportRepId = e.EmployeeId\n  WHERE e.Title = 'Sales Support Agent'\n  GROUP BY\n    e.EmployeeId,\n    e.FirstName,\n    e.LastName\n)\nSELECT\n  employee_id,\n  sales_support_agent,\n  ROUND(total_sales, 2) AS total_sales_usd\nFROM agent_sales\nQUALIFY RANK() OVER (ORDER BY total_sales DESC) = 1\nORDER BY total_sales DESC, sales_support_agent",
+            "detail": "employee_id | sales_support_agent | total_sales_usd\n3 | Jane Peacock | 833.04\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 7.31,
+      "llm_calls": 3,
+      "prompt_tokens": 9503,
+      "completion_tokens": 418
+    },
+    {
+      "id": "ch-06",
+      "dataset": "chinook",
+      "question": "Which 5 artists have the most albums?",
+      "category": "join + ranking",
+      "expected_type": "table",
+      "gold_sql": "SELECT ar.Name AS artist, count(*) AS albums FROM album al JOIN artist ar ON ar.ArtistId = al.ArtistId GROUP BY artist ORDER BY albums DESC, artist LIMIT 5",
+      "gold_preview": "artist | albums\nIron Maiden | 21\nLed Zeppelin | 14\nDeep Purple | 11\nMetallica | 10\nU2 | 10\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Which 5 artists have the most albums?",
+        "message": "Iron Maiden has the most albums with 21. Led Zeppelin follows with 14, and Deep Purple has 11.\n\n- Metallica and U2 are tied at 10 albums each.\n- The top five are Iron Maiden, Led Zeppelin, Deep Purple, Metallica, and U2.",
+        "sql": "SELECT\n  ar.ArtistId AS artist_id,\n  ar.Name AS artist_name,\n  COUNT(al.AlbumId) AS album_count\nFROM artist AS ar\nJOIN album AS al\n  ON al.ArtistId = ar.ArtistId\nGROUP BY ar.ArtistId, ar.Name\nORDER BY album_count DESC, artist_name ASC\nLIMIT 5",
+        "assumptions": [
+          "Rank artists by the count of album records associated with each artist, in descending order; return the top 5."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "artist_name",
+          "y": [
+            "artist_id",
+            "album_count"
+          ],
+          "series": null,
+          "title": "Five Artists with the Most Albums"
+        },
+        "result_preview": "artist_id | artist_name | album_count\n90 | Iron Maiden | 21\n22 | Led Zeppelin | 14\n58 | Deep Purple | 11\n50 | Metallica | 10\n150 | U2 | 10\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  ar.ArtistId AS artist_id,\n  ar.Name AS artist_name,\n  COUNT(al.AlbumId) AS album_count\nFROM artist AS ar\nJOIN album AS al\n  ON al.ArtistId = ar.ArtistId\nGROUP BY ar.ArtistId, ar.Name\nORDER BY album_count DESC, artist_name ASC\nLIMIT 5",
+            "detail": "artist_id | artist_name | album_count\n90 | Iron Maiden | 21\n22 | Led Zeppelin | 14\n58 | Deep Purple | 11\n50 | Metallica | 10\n150 | U2 | 10\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 6.25,
+      "llm_calls": 3,
+      "prompt_tokens": 9503,
+      "completion_tokens": 337
+    },
+    {
+      "id": "ch-07",
+      "dataset": "chinook",
+      "question": "What is the average track length in minutes for each media type?",
+      "category": "unit conversion",
+      "expected_type": "table",
+      "gold_sql": "SELECT m.Name AS media_type, round(avg(t.Milliseconds) / 60000.0, 2) AS avg_minutes FROM track t JOIN mediatype m ON m.MediaTypeId = t.MediaTypeId GROUP BY media_type ORDER BY avg_minutes DESC",
+      "gold_preview": "media_type | avg_minutes\nProtected MPEG-4 video file | 39.05\nProtected AAC audio file | 4.7\nAAC audio file | 4.61\nMPEG audio file | 4.43\nPurchased AAC audio file | 4.35\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What is the average track length in minutes for each media type?",
+        "message": "Average track length is highest for Protected MPEG-4 video files at about 39.05 minutes. The audio media types average roughly 4.35 to 4.70 minutes.\n\n- Protected AAC audio file: about 4.70 minutes\n- AAC audio file: about 4.61 minutes\n- MPEG audio file: about 4.43 minutes\n- Purchased AAC audio file: about 4.35 minutes",
+        "sql": "SELECT\n  mt.MediaTypeId AS media_type_id,\n  mt.Name AS media_type,\n  AVG(t.Milliseconds) / 60000.0 AS average_track_length_minutes\nFROM track AS t\nJOIN mediatype AS mt\n  ON t.MediaTypeId = mt.MediaTypeId\nGROUP BY\n  mt.MediaTypeId,\n  mt.Name\nORDER BY average_track_length_minutes DESC, media_type",
+        "assumptions": [
+          "Track length is measured using track.Milliseconds and converted to minutes by dividing by 60,000.",
+          "Average track length is calculated across catalog tracks within each media type."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "media_type",
+          "y": [
+            "media_type_id",
+            "average_track_length_minutes"
+          ],
+          "series": null,
+          "title": "Average Catalog Track Length by Media Type"
+        },
+        "result_preview": "media_type_id | media_type | average_track_length_minutes\n3 | Protected MPEG-4 video file | 39.049007087227416\n2 | Protected AAC audio file | 4.695397890295359\n5 | AAC audio file | 4.608448484848485\n1 | MPEG audio file | 4.426238145462536\n4 | Purchased AAC audio file | 4.348245238095238\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  mt.MediaTypeId AS media_type_id,\n  mt.Name AS media_type,\n  AVG(t.Milliseconds) / 60000.0 AS average_track_length_minutes\nFROM track AS t\nJOIN mediatype AS mt\n  ON t.MediaTypeId = mt.MediaTypeId\nGROUP BY\n  mt.MediaTypeId,\n  mt.Name\nORDER BY average_track_length_minutes DESC, media_type",
+            "detail": "media_type_id | media_type | average_track_length_minutes\n3 | Protected MPEG-4 video file | 39.049007087227416\n2 | Protected AAC audio file | 4.695397890295359\n5 | AAC audio file | 4.608448484848485\n1 | MPEG audio file | 4.426238145462536\n4 | Purchased AAC audio file | 4.348245238095238\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.63,
+      "llm_calls": 3,
+      "prompt_tokens": 9582,
+      "completion_tokens": 346
+    },
+    {
+      "id": "ch-08",
+      "dataset": "chinook",
+      "question": "Which genre brings in the most revenue in the USA?",
+      "category": "multi-hop join (4 tables)",
+      "expected_type": "table",
+      "gold_sql": "SELECT g.Name AS genre, round(sum(il.UnitPrice * il.Quantity), 2) AS revenue FROM invoice i JOIN invoiceline il ON il.InvoiceId = i.InvoiceId JOIN track t ON t.TrackId = il.TrackId JOIN genre g ON g.GenreId = t.GenreId WHERE i.BillingCountry = 'USA' GROUP BY genre ORDER BY revenue DESC LIMIT 1",
+      "gold_preview": "genre | revenue\nRock | 155.43\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Which music genre generates the most track-level sales revenue from invoices billed in the USA?",
+        "message": "Rock generates the most track-level sales revenue from invoices billed in the USA, with 155.43 in revenue.",
+        "sql": "WITH genre_revenue AS (\n  SELECT\n    g.\"GenreId\" AS genre_id,\n    g.\"Name\" AS genre_name,\n    SUM(il.\"UnitPrice\" * il.\"Quantity\") AS track_level_sales_revenue\n  FROM invoice AS i\n  JOIN invoiceline AS il\n    ON il.\"InvoiceId\" = i.\"InvoiceId\"\n  JOIN track AS t\n    ON t.\"TrackId\" = il.\"TrackId\"\n  JOIN genre AS g\n    ON g.\"GenreId\" = t.\"GenreId\"\n  WHERE i.\"BillingCountry\" = 'USA'\n  GROUP BY\n    g.\"GenreId\",\n    g.\"Name\"\n)\nSELECT\n  genre_id,\n  genre_name,\n  ROUND(track_level_sales_revenue, 2) AS track_level_sales_revenue\nFROM genre_revenue\nQUALIFY RANK() OVER (ORDER BY track_level_sales_revenue DESC) = 1\nORDER BY genre_name",
+        "assumptions": [
+          "Interpret 'revenue' by genre as line-item revenue: SUM(invoiceline.UnitPrice \u00d7 invoiceline.Quantity), since invoices can contain tracks from multiple genres.",
+          "Interpret 'in the USA' as invoices whose transaction-time BillingCountry is 'USA'.",
+          "Return the genre with the highest revenue across all available invoice dates (2009-01-01 to 2013-12-22)."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "table",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": "Top Genre(s) by USA Track-Level Sales Revenue"
+        },
+        "result_preview": "genre_id | genre_name | track_level_sales_revenue\n1 | Rock | 155.43\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH genre_revenue AS (\n  SELECT\n    g.\"GenreId\" AS genre_id,\n    g.\"Name\" AS genre_name,\n    SUM(il.\"UnitPrice\" * il.\"Quantity\") AS track_level_sales_revenue\n  FROM invoice AS i\n  JOIN invoiceline AS il\n    ON il.\"InvoiceId\" = i.\"InvoiceId\"\n  JOIN track AS t\n    ON t.\"TrackId\" = il.\"TrackId\"\n  JOIN genre AS g\n    ON g.\"GenreId\" = t.\"GenreId\"\n  WHERE i.\"BillingCountry\" = 'USA'\n  GROUP BY\n    g.\"GenreId\",\n    g.\"Name\"\n)\nSELECT\n  genre_id,\n  genre_name,\n  ROUND(track_level_sales_revenue, 2) AS track_level_sales_revenue\nFROM genre_revenue\nQUALIFY RANK() OVER (ORDER BY track_level_sales_revenue DESC) = 1\nORDER BY genre_name",
+            "detail": "genre_id | genre_name | track_level_sales_revenue\n1 | Rock | 155.43\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 7.09,
+      "llm_calls": 3,
+      "prompt_tokens": 9613,
+      "completion_tokens": 488
+    },
+    {
+      "id": "ch-09",
+      "dataset": "chinook",
+      "question": "What about Canada?",
+      "category": "follow-up",
+      "expected_type": "table",
+      "gold_sql": "SELECT g.Name AS genre, round(sum(il.UnitPrice * il.Quantity), 2) AS revenue FROM invoice i JOIN invoiceline il ON il.InvoiceId = i.InvoiceId JOIN track t ON t.TrackId = il.TrackId JOIN genre g ON g.GenreId = t.GenreId WHERE i.BillingCountry = 'Canada' GROUP BY genre ORDER BY revenue DESC LIMIT 1",
+      "gold_preview": "genre | revenue\nRock | 105.93\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Which music genre generates the most track-level sales revenue from invoices billed in Canada?",
+        "message": "Rock generates the most track-level sales revenue from invoices billed in Canada, with 105.93 in revenue.",
+        "sql": "WITH genre_revenue AS (\n  SELECT\n    g.\"GenreId\" AS genre_id,\n    g.\"Name\" AS genre_name,\n    SUM(il.\"UnitPrice\" * il.\"Quantity\") AS track_level_sales_revenue\n  FROM invoice AS i\n  JOIN invoiceline AS il\n    ON il.\"InvoiceId\" = i.\"InvoiceId\"\n  JOIN track AS t\n    ON t.\"TrackId\" = il.\"TrackId\"\n  JOIN genre AS g\n    ON g.\"GenreId\" = t.\"GenreId\"\n  WHERE i.\"BillingCountry\" = 'Canada'\n  GROUP BY g.\"GenreId\", g.\"Name\"\n)\nSELECT\n  genre_id,\n  genre_name,\n  ROUND(track_level_sales_revenue, 2) AS track_level_sales_revenue\nFROM genre_revenue\nQUALIFY RANK() OVER (ORDER BY track_level_sales_revenue DESC) = 1\nORDER BY genre_name",
+        "assumptions": [
+          "Use invoice billing country (BillingCountry) to identify Canadian sales.",
+          "Calculate genre-level revenue as the sum of invoice-line UnitPrice \u00d7 Quantity."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "table",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": "Top Genre by Track-Level Sales Revenue \u2014 Canada"
+        },
+        "result_preview": "genre_id | genre_name | track_level_sales_revenue\n1 | Rock | 105.93\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH genre_revenue AS (\n  SELECT\n    g.\"GenreId\" AS genre_id,\n    g.\"Name\" AS genre_name,\n    SUM(il.\"UnitPrice\" * il.\"Quantity\") AS track_level_sales_revenue\n  FROM invoice AS i\n  JOIN invoiceline AS il\n    ON il.\"InvoiceId\" = i.\"InvoiceId\"\n  JOIN track AS t\n    ON t.\"TrackId\" = il.\"TrackId\"\n  JOIN genre AS g\n    ON g.\"GenreId\" = t.\"GenreId\"\n  WHERE i.\"BillingCountry\" = 'Canada'\n  GROUP BY g.\"GenreId\", g.\"Name\"\n)\nSELECT\n  genre_id,\n  genre_name,\n  ROUND(track_level_sales_revenue, 2) AS track_level_sales_revenue\nFROM genre_revenue\nQUALIFY RANK() OVER (ORDER BY track_level_sales_revenue DESC) = 1\nORDER BY genre_name",
+            "detail": "genre_id | genre_name | track_level_sales_revenue\n1 | Rock | 105.93\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.9,
+      "llm_calls": 3,
+      "prompt_tokens": 10026,
+      "completion_tokens": 401
+    },
+    {
+      "id": "ch-10",
+      "dataset": "chinook",
+      "question": "What is the total revenue from Rock tracks?",
+      "category": "join fan-out trap",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(sum(il.UnitPrice * il.Quantity), 2) AS rock_revenue FROM invoiceline il JOIN track t ON t.TrackId = il.TrackId JOIN genre g ON g.GenreId = t.GenreId WHERE g.Name = 'Rock'",
+      "gold_preview": "rock_revenue\n826.65\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What is the total revenue from Rock tracks?",
+        "message": "The total line-item revenue from Rock tracks is 826.65.",
+        "sql": "SELECT\n  ROUND(SUM(il.UnitPrice * il.Quantity), 2) AS total_revenue\nFROM invoiceline AS il\nJOIN track AS t\n  ON il.TrackId = t.TrackId\nJOIN genre AS g\n  ON t.GenreId = g.GenreId\nWHERE g.Name = 'Rock'",
+        "assumptions": [
+          "Interpret \u201crevenue from Rock tracks\u201d as line-item revenue (SUM(invoiceline.UnitPrice \u00d7 invoiceline.Quantity)) for tracks whose genre is Rock."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "total_revenue\n826.65\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  ROUND(SUM(il.UnitPrice * il.Quantity), 2) AS total_revenue\nFROM invoiceline AS il\nJOIN track AS t\n  ON il.TrackId = t.TrackId\nJOIN genre AS g\n  ON t.GenreId = g.GenreId\nWHERE g.Name = 'Rock'",
+            "detail": "total_revenue\n826.65\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.05,
+      "llm_calls": 3,
+      "prompt_tokens": 9482,
+      "completion_tokens": 248
+    },
+    {
+      "id": "ch-11",
+      "dataset": "chinook",
+      "question": "How many tracks have never been purchased?",
+      "category": "anti-join",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS never_purchased FROM track t WHERE NOT EXISTS (SELECT 1 FROM invoiceline il WHERE il.TrackId = t.TrackId)",
+      "gold_preview": "never_purchased\n1519\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "How many catalog tracks have never been purchased?",
+        "message": "1,519 catalog tracks have never been purchased.",
+        "sql": "SELECT\n  COUNT(*) AS never_purchased_catalog_tracks\nFROM track AS t\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM invoiceline AS il\n  WHERE il.TrackId = t.TrackId\n)",
+        "assumptions": [
+          "A track is considered purchased if it appears on at least one invoice line item; count catalog tracks with no matching invoiceline record."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "never_purchased_catalog_tracks\n1519\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  COUNT(*) AS never_purchased_catalog_tracks\nFROM track AS t\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM invoiceline AS il\n  WHERE il.TrackId = t.TrackId\n)",
+            "detail": "never_purchased_catalog_tracks\n1519\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.01,
+      "llm_calls": 3,
+      "prompt_tokens": 9470,
+      "completion_tokens": 221
+    },
+    {
+      "id": "ch-12",
+      "dataset": "chinook",
+      "question": "List each employee with the name of their manager.",
+      "category": "self-join",
+      "expected_type": "table",
+      "gold_sql": "SELECT e.FirstName || ' ' || e.LastName AS employee, m.FirstName || ' ' || m.LastName AS manager FROM employee e LEFT JOIN employee m ON m.EmployeeId = e.ReportsTo ORDER BY e.EmployeeId",
+      "gold_preview": "employee | manager\nAndrew Adams | NULL\nNancy Edwards | Andrew Adams\nJane Peacock | Nancy Edwards\nMargaret Park | Nancy Edwards\nSteve Johnson | Nancy Edwards\nMichael Mitchell | Andrew Adams\nRobert King | Michael Mitchell\nLaura Callahan | Michael Mitchell\n(8 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "List each employee with the name of their manager.",
+        "message": "Andrew Adams has no manager. The other employees report to Andrew Adams, Nancy Edwards, or Michael Mitchell.\n\n- Andrew Adams manages Nancy Edwards and Michael Mitchell.\n- Nancy Edwards manages Steve Johnson, Margaret Park, and Jane Peacock.\n- Michael Mitchell manages Laura Callahan and Robert King.",
+        "sql": "SELECT\n  e.EmployeeId AS employee_id,\n  e.FirstName || ' ' || e.LastName AS employee_name,\n  m.EmployeeId AS manager_id,\n  m.FirstName || ' ' || m.LastName AS manager_name\nFROM employee AS e\nLEFT JOIN employee AS m\n  ON e.ReportsTo = m.EmployeeId\nORDER BY e.LastName, e.FirstName",
+        "assumptions": [
+          "Use employee.ReportsTo to identify each employee's direct manager; show null/no manager for the top-level employee."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "table",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": "Employees and Their Direct Managers"
+        },
+        "result_preview": "employee_id | employee_name | manager_id | manager_name\n1 | Andrew Adams | NULL | NULL\n8 | Laura Callahan | 6 | Michael Mitchell\n2 | Nancy Edwards | 1 | Andrew Adams\n5 | Steve Johnson | 2 | Nancy Edwards\n7 | Robert King | 6 | Michael Mitchell\n6 | Michael Mitchell | 1 | Andrew Adams\n4 | Margaret Park | 2 | Nancy Edwards\n3 | Jane Peacock | 2 | Nancy Edwards\n(8 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  e.EmployeeId AS employee_id,\n  e.FirstName || ' ' || e.LastName AS employee_name,\n  m.EmployeeId AS manager_id,\n  m.FirstName || ' ' || m.LastName AS manager_name\nFROM employee AS e\nLEFT JOIN employee AS m\n  ON e.ReportsTo = m.EmployeeId\nORDER BY e.LastName, e.FirstName",
+            "detail": "employee_id | employee_name | manager_id | manager_name\n1 | Andrew Adams | NULL | NULL\n8 | Laura Callahan | 6 | Michael Mitchell\n2 | Nancy Edwards | 1 | Andrew Adams\n5 | Steve Johnson | 2 | Nancy Edwards\n7 | Robert King | 6 | Michael Mitchell\n(8 rows, first 5 shown)"
+          }
+        ]
+      },
+      "latency_s": 5.7,
+      "llm_calls": 3,
+      "prompt_tokens": 9562,
+      "completion_tokens": 306
+    },
+    {
+      "id": "ch-13",
+      "dataset": "chinook",
+      "question": "What was the year-over-year revenue growth?",
+      "category": "window function",
+      "expected_type": "chart",
+      "gold_sql": "SELECT year, revenue, round(100.0 * (revenue - lag(revenue) OVER (ORDER BY year)) / lag(revenue) OVER (ORDER BY year), 2) AS growth_pct FROM (SELECT year(InvoiceDate) AS year, round(sum(Total), 2) AS revenue FROM invoice GROUP BY year) ORDER BY year",
+      "gold_preview": "year | revenue | growth_pct\n2009 | 449.46 | NULL\n2010 | 481.45 | 7.12\n2011 | 469.58 | -2.47\n2012 | 477.53 | 1.69\n2013 | 450.58 | -5.64\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What was the year-over-year revenue growth?",
+        "message": "Here are the results (5 rows).",
+        "sql": "WITH annual_revenue AS (\n  SELECT\n    EXTRACT(YEAR FROM InvoiceDate)::INTEGER AS revenue_year,\n    SUM(Total) AS annual_revenue\n  FROM invoice\n  GROUP BY 1\n),\nrevenue_with_prior_year AS (\n  SELECT\n    revenue_year,\n    annual_revenue,\n    LAG(annual_revenue) OVER (ORDER BY revenue_year) AS prior_year_revenue\n  FROM annual_revenue\n)\nSELECT\n  revenue_year,\n  ROUND(annual_revenue, 2) AS annual_revenue_usd,\n  ROUND(prior_year_revenue, 2) AS prior_year_revenue_usd,\n  ROUND(\n    100.0 * (annual_revenue - prior_year_revenue) / prior_year_revenue,\n    2\n  ) AS year_over_year_revenue_growth_pct\nFROM revenue_with_prior_year\nORDER BY revenue_year",
+        "assumptions": [
+          "Revenue is defined as the sum of invoice totals (USD).",
+          "Calculate annual revenue by invoice date, then year-over-year growth as the percentage change from the prior calendar year.",
+          "The 2013 value covers invoices through 2013-12-22 only, so its comparison with full prior years is partial-year and not directly like-for-like.",
+          "Annual revenue is grouped by the calendar year of invoice.InvoiceDate and calculated as SUM(invoice.Total) in USD.",
+          "The 2013 result covers 2013-01-01 through 2013-12-22 only; its year-over-year comparison is not like-for-like with complete prior calendar years."
+        ],
+        "warnings": [],
+        "notes": [
+          "Narration figures not found in the result: -2.47%, -5.64%; used a plain summary."
+        ],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "line",
+          "x": "revenue_year",
+          "y": [
+            "year_over_year_revenue_growth_pct"
+          ],
+          "series": null,
+          "title": "Year-over-Year Revenue Growth"
+        },
+        "result_preview": "revenue_year | annual_revenue_usd | prior_year_revenue_usd | year_over_year_revenue_growth_pct\n2009 | 449.46 | NULL | NULL\n2010 | 481.45 | 449.46 | 7.12\n2011 | 469.58 | 481.45 | -2.47\n2012 | 477.53 | 469.58 | 1.69\n2013 | 450.58 | 477.53 | -5.64\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH annual_revenue AS (\n  SELECT\n    EXTRACT(YEAR FROM InvoiceDate)::INTEGER AS revenue_year,\n    SUM(Total) AS annual_revenue\n  FROM invoice\n  GROUP BY 1\n),\nrevenue_with_prior_year AS (\n  SELECT\n    revenue_year,\n    annual_revenue,\n    LAG(annual_revenue) OVER (ORDER BY revenue_year) AS prior_year_revenue\n  FROM annual_revenue\n)\nSELECT\n  revenue_year,\n  ROUND(annual_revenue, 2) AS annual_revenue_usd,\n  ROUND(prior_year_revenue, 2) AS prior_year_revenue_usd,\n  ROUND(\n    100.0 * (annual_revenue - prior_year_revenue) / prior_year_revenue,\n    2\n  ) AS year_over_year_revenue_growth_pct\nFROM revenue_with_prior_year\nORDER BY revenue_year",
+            "detail": "revenue_year | annual_revenue_usd | prior_year_revenue_usd | year_over_year_revenue_growth_pct\n2009 | 449.46 | NULL | NULL\n2010 | 481.45 | 449.46 | 7.12\n2011 | 469.58 | 481.45 | -2.47\n2012 | 477.53 | 469.58 | 1.69\n2013 | 450.58 | 477.53 | -5.64\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 8.18,
+      "llm_calls": 3,
+      "prompt_tokens": 9744,
+      "completion_tokens": 702
+    },
+    {
+      "id": "ch-14",
+      "dataset": "chinook",
+      "question": "Which playlist has the most tracks?",
+      "category": "many-to-many bridge",
+      "expected_type": "table",
+      "gold_sql": "SELECT p.Name AS playlist, count(*) AS tracks FROM playlisttrack pt JOIN playlist p ON p.PlaylistId = pt.PlaylistId GROUP BY p.PlaylistId, p.Name QUALIFY rank() OVER (ORDER BY count(*) DESC) = 1",
+      "gold_preview": "playlist | tracks\nMusic | 3290\nMusic | 3290\n(2 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Which playlist has the most tracks?",
+        "message": "Music has the most tracks, with 3,290 tracks. Two playlists are tied for the top count: playlist IDs 1 and 8, both named Music.",
+        "sql": "WITH playlist_track_counts AS (\n  SELECT\n    p.PlaylistId AS playlist_id,\n    p.Name AS playlist_name,\n    COUNT(pt.TrackId) AS track_count\n  FROM playlist AS p\n  LEFT JOIN playlisttrack AS pt\n    ON pt.PlaylistId = p.PlaylistId\n  GROUP BY p.PlaylistId, p.Name\n)\nSELECT\n  playlist_id,\n  playlist_name,\n  track_count\nFROM playlist_track_counts\nQUALIFY RANK() OVER (ORDER BY track_count DESC) = 1\nORDER BY playlist_name",
+        "assumptions": [
+          "Count playlisttrack rows (distinct tracks) for each playlist; include playlists with no tracks if any."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "playlist_name",
+          "y": [
+            "playlist_id",
+            "track_count"
+          ],
+          "series": null,
+          "title": "Playlist(s) with the Most Tracks"
+        },
+        "result_preview": "playlist_id | playlist_name | track_count\n1 | Music | 3290\n8 | Music | 3290\n(2 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH playlist_track_counts AS (\n  SELECT\n    p.PlaylistId AS playlist_id,\n    p.Name AS playlist_name,\n    COUNT(pt.TrackId) AS track_count\n  FROM playlist AS p\n  LEFT JOIN playlisttrack AS pt\n    ON pt.PlaylistId = p.PlaylistId\n  GROUP BY p.PlaylistId, p.Name\n)\nSELECT\n  playlist_id,\n  playlist_name,\n  track_count\nFROM playlist_track_counts\nQUALIFY RANK() OVER (ORDER BY track_count DESC) = 1\nORDER BY playlist_name",
+            "detail": "playlist_id | playlist_name | track_count\n1 | Music | 3290\n8 | Music | 3290\n(2 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.32,
+      "llm_calls": 3,
+      "prompt_tokens": 9467,
+      "completion_tokens": 306
+    },
+    {
+      "id": "ch-15",
+      "dataset": "chinook",
+      "question": "Who is our best customer?",
+      "category": "ambiguity",
+      "expected_type": "clarification",
+      "gold_sql": null,
+      "gold_preview": null,
+      "score": {
+        "status": "answered",
+        "pass": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Who is the best customer?",
+        "message": "Helena Hol\u00fd is the best customer by total invoice revenue, with 49.62 across the available invoice period.",
+        "sql": "WITH customer_revenue AS (\n  SELECT\n    i.CustomerId,\n    SUM(i.Total) AS total_revenue\n  FROM invoice AS i\n  GROUP BY i.CustomerId\n)\nSELECT\n  c.CustomerId AS customer_id,\n  c.FirstName || ' ' || c.LastName AS customer_name,\n  ROUND(cr.total_revenue, 2) AS total_revenue\nFROM customer_revenue AS cr\nJOIN customer AS c\n  ON c.CustomerId = cr.CustomerId\nQUALIFY RANK() OVER (ORDER BY cr.total_revenue DESC) = 1\nORDER BY total_revenue DESC, customer_name ASC",
+        "assumptions": [
+          "Interpret \u201cbest customer\u201d as the customer with the highest total invoice revenue across the full available invoice period (2009-01-01 through 2013-12-22)."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "table",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": "Best Customer by Total Invoice Revenue"
+        },
+        "result_preview": "customer_id | customer_name | total_revenue\n6 | Helena Hol\u00fd | 49.62\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH customer_revenue AS (\n  SELECT\n    i.CustomerId,\n    SUM(i.Total) AS total_revenue\n  FROM invoice AS i\n  GROUP BY i.CustomerId\n)\nSELECT\n  c.CustomerId AS customer_id,\n  c.FirstName || ' ' || c.LastName AS customer_name,\n  ROUND(cr.total_revenue, 2) AS total_revenue\nFROM customer_revenue AS cr\nJOIN customer AS c\n  ON c.CustomerId = cr.CustomerId\nQUALIFY RANK() OVER (ORDER BY cr.total_revenue DESC) = 1\nORDER BY total_revenue DESC, customer_name ASC",
+            "detail": "customer_id | customer_name | total_revenue\n6 | Helena Hol\u00fd | 49.62\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.33,
+      "llm_calls": 3,
+      "prompt_tokens": 9492,
+      "completion_tokens": 323
+    },
+    {
+      "id": "ch-16",
+      "dataset": "chinook",
+      "question": "How many times was each track streamed last month?",
+      "category": "unanswerable",
+      "expected_type": "refusal",
+      "gold_sql": null,
+      "gold_preview": null,
+      "score": {
+        "status": "refuse",
+        "pass": true
+      },
+      "answer": {
+        "status": "refuse",
+        "standalone_question": "How many times was each track streamed from 2013-11-01 through 2013-11-30?",
+        "message": "The dataset does not contain streaming or play-count data, so it cannot show how many times each track was streamed. It does contain invoice line items, so I can instead report how many units of each track were sold during November 2013.",
+        "sql": null,
+        "assumptions": [
+          "\u201cLast month\u201d is anchored to the latest available date (2013-12-22), so it means November 2013.",
+          "Streaming activity is distinct from track purchases/sales."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": null,
+        "result_preview": null,
+        "steps": []
+      },
+      "latency_s": 2.76,
+      "llm_calls": 1,
+      "prompt_tokens": 4385,
+      "completion_tokens": 235
+    },
+    {
+      "id": "tp-01",
+      "dataset": "tpch",
+      "question": "How many orders were placed in 1995?",
+      "category": "aggregation + date filter",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS orders FROM orders WHERE year(o_orderdate) = 1995",
+      "gold_preview": "orders\n2204\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "How many orders were placed in 1995?",
+        "message": "2,204 orders were placed in 1995.",
+        "sql": "SELECT\n  COUNT(DISTINCT o_orderkey) AS order_count\nFROM orders\nWHERE o_orderdate >= DATE '1995-01-01'\n  AND o_orderdate < DATE '1996-01-01'",
+        "assumptions": [
+          "\u201cOrders placed\u201d is measured as the count of distinct order IDs using the order placement date (orders.o_orderdate)."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "order_count\n2204\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  COUNT(DISTINCT o_orderkey) AS order_count\nFROM orders\nWHERE o_orderdate >= DATE '1995-01-01'\n  AND o_orderdate < DATE '1996-01-01'",
+            "detail": "order_count\n2204\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.04,
+      "llm_calls": 3,
+      "prompt_tokens": 9397,
+      "completion_tokens": 241
+    },
+    {
+      "id": "tp-02",
+      "dataset": "tpch",
+      "question": "How many customers are in each market segment?",
+      "category": "aggregation",
+      "expected_type": "chart",
+      "gold_sql": "SELECT c_mktsegment AS segment, count(*) AS customers FROM customer GROUP BY segment ORDER BY customers DESC, segment",
+      "gold_preview": "segment | customers\nBUILDING | 337\nAUTOMOBILE | 302\nHOUSEHOLD | 294\nMACHINERY | 288\nFURNITURE | 279\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "How many customers are in each market segment?",
+        "message": "There are five market segments, with customer counts ranging from 279 to 337.\n\n- BUILDING has the most customers: 337.\n- AUTOMOBILE has 302, HOUSEHOLD has 294, and MACHINERY has 288.\n- FURNITURE has the fewest customers: 279.",
+        "sql": "SELECT\n  c_mktsegment AS market_segment,\n  COUNT(DISTINCT c_custkey) AS customer_count\nFROM customer\nGROUP BY c_mktsegment\nORDER BY market_segment",
+        "assumptions": [
+          "Count distinct customers grouped by customer market segment (customer.c_mktsegment)."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "market_segment",
+          "y": [
+            "customer_count"
+          ],
+          "series": null,
+          "title": "Customers by Market Segment"
+        },
+        "result_preview": "market_segment | customer_count\nAUTOMOBILE | 302\nBUILDING | 337\nFURNITURE | 279\nHOUSEHOLD | 294\nMACHINERY | 288\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  c_mktsegment AS market_segment,\n  COUNT(DISTINCT c_custkey) AS customer_count\nFROM customer\nGROUP BY c_mktsegment\nORDER BY market_segment",
+            "detail": "market_segment | customer_count\nAUTOMOBILE | 302\nBUILDING | 337\nFURNITURE | 279\nHOUSEHOLD | 294\nMACHINERY | 288\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 7.1,
+      "llm_calls": 3,
+      "prompt_tokens": 9392,
+      "completion_tokens": 256
+    },
+    {
+      "id": "tp-03",
+      "dataset": "tpch",
+      "question": "Show total revenue per year.",
+      "category": "time series + metric definition",
+      "expected_type": "chart",
+      "gold_sql": "SELECT year(o.o_orderdate) AS year, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM lineitem l JOIN orders o ON o.o_orderkey = l.l_orderkey GROUP BY year ORDER BY year",
+      "gold_preview": "year | revenue\n1992 | 308482375.34\n1993 | 316544935.44\n1994 | 316270913.18\n1995 | 303910494.1\n1996 | 311928357.78\n1997 | 307992639.49\n1998 | 180005226.76\n(7 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Show total revenue per year.",
+        "message": "Total revenue was highest in 1993 at 316,544,935.44 and lowest in 1998 at 180,005,226.76.\n\n- Revenue stayed near 300 million from 1992 through 1997.\n- It rose from 308,482,375.34 in 1992 to 316,544,935.44 in 1993, then generally declined through 1997.\n- 1998 shows a notably lower total of 180,005,226.76.",
+        "sql": "SELECT\n  EXTRACT(YEAR FROM o.o_orderdate)::INTEGER AS order_year,\n  ROUND(SUM(l.l_extendedprice * (1 - l.l_discount)), 2) AS total_revenue\nFROM lineitem AS l\nJOIN orders AS o\n  ON o.o_orderkey = l.l_orderkey\nGROUP BY 1\nORDER BY 1",
+        "assumptions": [
+          "Revenue is Net Line Revenue: SUM(l_extendedprice * (1 - l_discount)).",
+          "Year is based on the order placement date (orders.o_orderdate)."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "line",
+          "x": "order_year",
+          "y": [
+            "total_revenue"
+          ],
+          "series": null,
+          "title": "Total Revenue by Order Year"
+        },
+        "result_preview": "order_year | total_revenue\n1992 | 308482375.34\n1993 | 316544935.44\n1994 | 316270913.18\n1995 | 303910494.1\n1996 | 311928357.78\n1997 | 307992639.49\n1998 | 180005226.76\n(7 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  EXTRACT(YEAR FROM o.o_orderdate)::INTEGER AS order_year,\n  ROUND(SUM(l.l_extendedprice * (1 - l.l_discount)), 2) AS total_revenue\nFROM lineitem AS l\nJOIN orders AS o\n  ON o.o_orderkey = l.l_orderkey\nGROUP BY 1\nORDER BY 1",
+            "detail": "order_year | total_revenue\n1992 | 308482375.34\n1993 | 316544935.44\n1994 | 316270913.18\n1995 | 303910494.1\n1996 | 311928357.78\n(7 rows, first 5 shown)"
+          }
+        ]
+      },
+      "latency_s": 9.05,
+      "llm_calls": 3,
+      "prompt_tokens": 9454,
+      "completion_tokens": 369
+    },
+    {
+      "id": "tp-04",
+      "dataset": "tpch",
+      "question": "What is the revenue by region?",
+      "category": "multi-hop join (5 tables)",
+      "expected_type": "chart",
+      "gold_sql": "SELECT r.r_name AS region, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM lineitem l JOIN orders o ON o.o_orderkey = l.l_orderkey JOIN customer c ON c.c_custkey = o.o_custkey JOIN nation n ON n.n_nationkey = c.c_nationkey JOIN region r ON r.r_regionkey = n.n_regionkey GROUP BY region ORDER BY revenue DESC",
+      "gold_preview": "region | revenue\nMIDDLE EAST | 451328736.42\nAFRICA | 427985211.41\nAMERICA | 397598380.19\nASIA | 397022970.41\nEUROPE | 371199643.67\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What is the revenue by region?",
+        "message": "The MIDDLE EAST generated the highest net revenue at 451328736.42, while EUROPE generated the lowest at 371199643.67.\n\n- AFRICA: 427985211.41\n- AMERICA and ASIA were similar at 397598380.19 and 397022970.41, respectively.\n- Revenue is reported by customers\u2019 region.",
+        "sql": "SELECT\n  r.r_name AS customer_region,\n  ROUND(SUM(l.l_extendedprice * (1 - l.l_discount)), 2) AS net_revenue\nFROM lineitem AS l\nJOIN orders AS o\n  ON l.l_orderkey = o.o_orderkey\nJOIN customer AS c\n  ON o.o_custkey = c.c_custkey\nJOIN nation AS n\n  ON c.c_nationkey = n.n_nationkey\nJOIN region AS r\n  ON n.n_regionkey = r.r_regionkey\nGROUP BY r.r_name\nORDER BY net_revenue DESC, customer_region ASC",
+        "assumptions": [
+          "Revenue means net line revenue: SUM(l_extendedprice * (1 - l_discount)), before tax.",
+          "Region refers to the customer\u2019s region (line item \u2192 order \u2192 customer \u2192 nation \u2192 region)."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "customer_region",
+          "y": [
+            "net_revenue"
+          ],
+          "series": null,
+          "title": "Net Revenue by Customer Region"
+        },
+        "result_preview": "customer_region | net_revenue\nMIDDLE EAST | 451328736.42\nAFRICA | 427985211.41\nAMERICA | 397598380.19\nASIA | 397022970.41\nEUROPE | 371199643.67\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  r.r_name AS customer_region,\n  ROUND(SUM(l.l_extendedprice * (1 - l.l_discount)), 2) AS net_revenue\nFROM lineitem AS l\nJOIN orders AS o\n  ON l.l_orderkey = o.o_orderkey\nJOIN customer AS c\n  ON o.o_custkey = c.c_custkey\nJOIN nation AS n\n  ON c.c_nationkey = n.n_nationkey\nJOIN region AS r\n  ON n.n_regionkey = r.r_regionkey\nGROUP BY r.r_name\nORDER BY net_revenue DESC, customer_region ASC",
+            "detail": "customer_region | net_revenue\nMIDDLE EAST | 451328736.42\nAFRICA | 427985211.41\nAMERICA | 397598380.19\nASIA | 397022970.41\nEUROPE | 371199643.67\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 6.46,
+      "llm_calls": 3,
+      "prompt_tokens": 9456,
+      "completion_tokens": 400
+    },
+    {
+      "id": "tp-05",
+      "dataset": "tpch",
+      "question": "Which 5 nations had the most revenue from local suppliers in Asia during 1994?",
+      "category": "official TPC-H Q5",
+      "expected_type": "table",
+      "gold_sql": "SELECT n.n_name AS nation, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM customer c JOIN orders o ON c.c_custkey = o.o_custkey JOIN lineitem l ON l.l_orderkey = o.o_orderkey JOIN supplier s ON l.l_suppkey = s.s_suppkey AND c.c_nationkey = s.s_nationkey JOIN nation n ON s.s_nationkey = n.n_nationkey JOIN region r ON n.n_regionkey = r.r_regionkey WHERE r.r_name = 'ASIA' AND o.o_orderdate >= DATE '1994-01-01' AND o.o_orderdate < DATE '1995-01-01' GROUP BY nation ORDER BY revenue DESC LIMIT 5",
+      "gold_preview": "nation | revenue\nVIETNAM | 1000926.7\nCHINA | 740210.76\nJAPAN | 660651.24\nINDONESIA | 566379.53\nINDIA | 422874.68\n(5 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Which five customer nations had the highest net line revenue in 1994 from suppliers located in the same nation, restricted to customer nations in the ASIA region?",
+        "message": "The five Asian customer nations with the highest 1994 net line revenue from local suppliers were Vietnam, China, Japan, Indonesia, and India. Vietnam led with 1,000,926.7 in net line revenue.\n\n- China followed with 740,210.76, ahead of Japan at 660,651.24.\n- Indonesia recorded 566,379.53 and India recorded 422,874.68.",
+        "sql": "SELECT\n  customer_nation.n_name AS customer_nation,\n  ROUND(SUM(l.l_extendedprice * (1 - l.l_discount)), 2) AS net_line_revenue\nFROM lineitem AS l\nJOIN orders AS o\n  ON o.o_orderkey = l.l_orderkey\nJOIN customer AS c\n  ON c.c_custkey = o.o_custkey\nJOIN nation AS customer_nation\n  ON customer_nation.n_nationkey = c.c_nationkey\nJOIN region AS customer_region\n  ON customer_region.r_regionkey = customer_nation.n_regionkey\nJOIN supplier AS s\n  ON s.s_suppkey = l.l_suppkey\nJOIN nation AS supplier_nation\n  ON supplier_nation.n_nationkey = s.s_nationkey\nWHERE o.o_orderdate >= DATE '1994-01-01'\n  AND o.o_orderdate < DATE '1995-01-01'\n  AND customer_region.r_name = 'ASIA'\n  AND supplier_nation.n_nationkey = customer_nation.n_nationkey\nGROUP BY customer_nation.n_name\nORDER BY net_line_revenue DESC\nLIMIT 5",
+        "assumptions": [
+          "\u201cRevenue\u201d means net line revenue: SUM(l_extendedprice * (1 - l_discount)).",
+          "\u201cLocal suppliers\u201d means the supplier and customer are located in the same nation.",
+          "\u201cIn Asia\u201d refers to the customer's nation being in the ASIA region.",
+          "1994 is filtered using orders.o_orderdate."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "customer_nation",
+          "y": [
+            "net_line_revenue"
+          ],
+          "series": null,
+          "title": "Top Five Asian Customer Nations by Local-Supplier Net Line Revenue in 1994"
+        },
+        "result_preview": "customer_nation | net_line_revenue\nVIETNAM | 1000926.7\nCHINA | 740210.76\nJAPAN | 660651.24\nINDONESIA | 566379.53\nINDIA | 422874.68\n(5 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  customer_nation.n_name AS customer_nation,\n  ROUND(SUM(l.l_extendedprice * (1 - l.l_discount)), 2) AS net_line_revenue\nFROM lineitem AS l\nJOIN orders AS o\n  ON o.o_orderkey = l.l_orderkey\nJOIN customer AS c\n  ON c.c_custkey = o.o_custkey\nJOIN nation AS customer_nation\n  ON customer_nation.n_nationkey = c.c_nationkey\nJOIN region AS customer_region\n  ON customer_region.r_regionkey = customer_nation.n_regionkey\nJOIN supplier AS s\n  ON s.s_suppkey = l.l_suppkey\nJOIN nation AS supplier_nation\n  ON supplier_nation.n_nationkey = s.s_nationkey\nWHERE o.o_orderdate >= DATE '1994-01-01'\n  AND o.o_orderdate < DATE '1995-01-01'\n  AND customer_region.r_name = 'ASIA'\n  AND supplier_nation.n_nationkey = customer_nation.n_nationkey\nGROUP BY customer_nation.n_name\nORDER BY net_line_revenue DESC\nLIMIT 5",
+            "detail": "customer_nation | net_line_revenue\nVIETNAM | 1000926.7\nCHINA | 740210.76\nJAPAN | 660651.24\nINDONESIA | 566379.53\nINDIA | 422874.68\n(5 rows)"
+          }
+        ]
+      },
+      "latency_s": 9.94,
+      "llm_calls": 3,
+      "prompt_tokens": 9594,
+      "completion_tokens": 658
+    },
+    {
+      "id": "tp-06",
+      "dataset": "tpch",
+      "question": "Summarize quantity, price and average discount of line items shipped on or before 1998-09-02, grouped by return flag and line status.",
+      "category": "official TPC-H Q1",
+      "expected_type": "table",
+      "gold_sql": "SELECT l_returnflag, l_linestatus, sum(l_quantity) AS sum_qty, round(sum(l_extendedprice), 2) AS sum_base_price, round(avg(l_discount), 4) AS avg_disc FROM lineitem WHERE l_shipdate <= DATE '1998-09-02' GROUP BY l_returnflag, l_linestatus ORDER BY l_returnflag, l_linestatus",
+      "gold_preview": "l_returnflag | l_linestatus | sum_qty | sum_base_price | avg_disc\nA | F | 380456.0 | 532348211.65 | 0.0501\nN | F | 8971.0 | 12384801.37 | 0.0478\nN | O | 742802.0 | 1041502841.45 | 0.0499\nR | F | 381449.0 | 534594445.35 | 0.0498\n(4 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Summarize total quantity, total pre-discount line-item price, and average discount for line items shipped on or before 1998-09-02, grouped by return flag and line status.",
+        "message": "For line items shipped on or before 1998-09-02, the N/O group has the largest total quantity (742802.0) and pre-discount price (1041502841.45). Average discounts are close to 0.05 across all return-flag and line-status groups.\n\n- A/F: total quantity 380456.0; total pre-discount price 532348211.65; average discount 0.05008133906963965.\n- R/F: total quantity 381449.0; total pre-discount price 534594445.35; average discount 0.049827539927524055.\n- N/F is the smallest group, with total quantity 8971.0 and total pre-discount price 12384801.37; its average discount is 0.04775862068965505.",
+        "sql": "SELECT\n  l_returnflag AS return_flag,\n  l_linestatus AS line_status,\n  SUM(l_quantity) AS total_quantity,\n  ROUND(SUM(l_extendedprice), 2) AS total_pre_discount_line_item_price,\n  AVG(l_discount) AS average_discount\nFROM lineitem\nWHERE l_shipdate <= DATE '1998-09-02'\nGROUP BY l_returnflag, l_linestatus\nORDER BY l_returnflag, l_linestatus",
+        "assumptions": [
+          "\u201cQuantity\u201d means SUM(lineitem.l_quantity).",
+          "\u201cPrice\u201d means total pre-discount line-item price, SUM(lineitem.l_extendedprice).",
+          "\u201cAverage discount\u201d means the unweighted average of lineitem.l_discount, reported as a decimal rate.",
+          "Shipment timing is based on lineitem.l_shipdate."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "table",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": "Line-Item Quantity, Pre-Discount Price, and Average Discount by Return Flag and Status"
+        },
+        "result_preview": "return_flag | line_status | total_quantity | total_pre_discount_line_item_price | average_discount\nA | F | 380456.0 | 532348211.65 | 0.05008133906963965\nN | F | 8971.0 | 12384801.37 | 0.04775862068965505\nN | O | 742802.0 | 1041502841.45 | 0.04993111956408442\nR | F | 381449.0 | 534594445.35 | 0.049827539927524055\n(4 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  l_returnflag AS return_flag,\n  l_linestatus AS line_status,\n  SUM(l_quantity) AS total_quantity,\n  ROUND(SUM(l_extendedprice), 2) AS total_pre_discount_line_item_price,\n  AVG(l_discount) AS average_discount\nFROM lineitem\nWHERE l_shipdate <= DATE '1998-09-02'\nGROUP BY l_returnflag, l_linestatus\nORDER BY l_returnflag, l_linestatus",
+            "detail": "return_flag | line_status | total_quantity | total_pre_discount_line_item_price | average_discount\nA | F | 380456.0 | 532348211.65 | 0.05008133906963965\nN | F | 8971.0 | 12384801.37 | 0.04775862068965505\nN | O | 742802.0 | 1041502841.45 | 0.04993111956408442\nR | F | 381449.0 | 534594445.35 | 0.049827539927524055\n(4 rows)"
+          }
+        ]
+      },
+      "latency_s": 8.62,
+      "llm_calls": 3,
+      "prompt_tokens": 9697,
+      "completion_tokens": 544
+    },
+    {
+      "id": "tp-07",
+      "dataset": "tpch",
+      "question": "Who are the top 10 customers by total order value?",
+      "category": "join + ranking",
+      "expected_type": "table",
+      "gold_sql": "SELECT c.c_name AS customer, round(sum(o.o_totalprice), 2) AS total_order_value FROM customer c JOIN orders o ON o.o_custkey = c.c_custkey GROUP BY customer ORDER BY total_order_value DESC LIMIT 10",
+      "gold_preview": "customer | total_order_value\nCustomer#000001489 | 5408941.28\nCustomer#000000214 | 4674894.73\nCustomer#000001396 | 4644936.89\nCustomer#000001246 | 4642942.33\nCustomer#000000073 | 4638819.21\nCustomer#000000643 | 4555789.04\nCustomer#000001318 | 4520525.11\nCustomer#000001150 | 4516089.38\nCustomer#000000898 | 4460059.6\nCustomer#000000943 | 4432159.86\n(10 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "Who are the top 10 customers by total order value?",
+        "message": "Customer#000001489 (ID 1489) is the top customer by total order value, at 5,408,941.28. Customer#000000214 (ID 214) ranks second at 4,674,894.73, followed by Customer#000001396 (ID 1396) at 4,644,936.89.\n\n- Ranks 4\u20136 are Customer#000001246, Customer#000000073, and Customer#000000643.\n- Ranks 7\u201310 are Customer#000001318, Customer#000001150, Customer#000000898, and Customer#000000943.",
+        "sql": "WITH customer_order_value AS (\n  SELECT\n    o.o_custkey,\n    SUM(o.o_totalprice) AS total_order_value\n  FROM orders AS o\n  GROUP BY o.o_custkey\n),\nranked_customers AS (\n  SELECT\n    c.c_custkey AS customer_id,\n    c.c_name AS customer_name,\n    cov.total_order_value,\n    ROW_NUMBER() OVER (ORDER BY cov.total_order_value DESC) AS customer_rank\n  FROM customer_order_value AS cov\n  JOIN customer AS c\n    ON c.c_custkey = cov.o_custkey\n)\nSELECT\n  customer_rank,\n  customer_id,\n  customer_name,\n  ROUND(total_order_value, 2) AS total_order_value\nFROM ranked_customers\nWHERE customer_rank <= 10\nORDER BY customer_rank",
+        "assumptions": [
+          "Total order value is calculated as the sum of orders.o_totalprice for each customer across all available order dates.",
+          "Rank customers in descending order of total order value and return the top 10."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "customer_name",
+          "y": [
+            "customer_rank",
+            "customer_id",
+            "total_order_value"
+          ],
+          "series": null,
+          "title": "Top 10 Customers by Total Order Value"
+        },
+        "result_preview": "customer_rank | customer_id | customer_name | total_order_value\n1 | 1489 | Customer#000001489 | 5408941.28\n2 | 214 | Customer#000000214 | 4674894.73\n3 | 1396 | Customer#000001396 | 4644936.89\n4 | 1246 | Customer#000001246 | 4642942.33\n5 | 73 | Customer#000000073 | 4638819.21\n6 | 643 | Customer#000000643 | 4555789.04\n7 | 1318 | Customer#000001318 | 4520525.11\n8 | 1150 | Customer#000001150 | 4516089.38\n9 | 898 | Customer#000000898 | 4460059.6\n10 | 943 | Customer#000000943 | 4432159.86\n(10 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "WITH customer_order_value AS (\n  SELECT\n    o.o_custkey,\n    SUM(o.o_totalprice) AS total_order_value\n  FROM orders AS o\n  GROUP BY o.o_custkey\n),\nranked_customers AS (\n  SELECT\n    c.c_custkey AS customer_id,\n    c.c_name AS customer_name,\n    cov.total_order_value,\n    ROW_NUMBER() OVER (ORDER BY cov.total_order_value DESC) AS customer_rank\n  FROM customer_order_value AS cov\n  JOIN customer AS c\n    ON c.c_custkey = cov.o_custkey\n)\nSELECT\n  customer_rank,\n  customer_id,\n  customer_name,\n  ROUND(total_order_value, 2) AS total_order_value\nFROM ranked_customers\nWHERE customer_rank <= 10\nORDER BY customer_rank",
+            "detail": "customer_rank | customer_id | customer_name | total_order_value\n1 | 1489 | Customer#000001489 | 5408941.28\n2 | 214 | Customer#000000214 | 4674894.73\n3 | 1396 | Customer#000001396 | 4644936.89\n4 | 1246 | Customer#000001246 | 4642942.33\n5 | 73 | Customer#000000073 | 4638819.21\n(10 rows, first 5 shown)"
+          }
+        ]
+      },
+      "latency_s": 6.31,
+      "llm_calls": 3,
+      "prompt_tokens": 9607,
+      "completion_tokens": 498
+    },
+    {
+      "id": "tp-08",
+      "dataset": "tpch",
+      "question": "What percentage of line items were received later than their commit date?",
+      "category": "ratio + date comparison",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(100.0 * count(*) FILTER (WHERE l_receiptdate > l_commitdate) / count(*), 2) AS late_pct FROM lineitem",
+      "gold_preview": "late_pct\n62.98\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What percentage of line items were received later than their commit date?",
+        "message": "62.98% of line items were received later than their commit date.",
+        "sql": "SELECT\n  ROUND(\n    100.0 * SUM(CASE WHEN l_receiptdate > l_commitdate THEN 1 ELSE 0 END) / COUNT(*),\n    2\n  ) AS late_receipt_percentage\nFROM lineitem",
+        "assumptions": [
+          "Calculate the percentage as line items where l_receiptdate is later than l_commitdate divided by all line items."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "late_receipt_percentage\n62.98\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  ROUND(\n    100.0 * SUM(CASE WHEN l_receiptdate > l_commitdate THEN 1 ELSE 0 END) / COUNT(*),\n    2\n  ) AS late_receipt_percentage\nFROM lineitem",
+            "detail": "late_receipt_percentage\n62.98\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 4.43,
+      "llm_calls": 3,
+      "prompt_tokens": 9387,
+      "completion_tokens": 235
+    },
+    {
+      "id": "tp-09",
+      "dataset": "tpch",
+      "question": "Break that down by ship mode.",
+      "category": "follow-up",
+      "expected_type": "chart",
+      "gold_sql": "SELECT l_shipmode AS ship_mode, round(100.0 * count(*) FILTER (WHERE l_receiptdate > l_commitdate) / count(*), 2) AS late_pct FROM lineitem GROUP BY ship_mode ORDER BY late_pct DESC",
+      "gold_preview": "ship_mode | late_pct\nFOB | 63.46\nSHIP | 63.12\nMAIL | 63.06\nRAIL | 63.06\nAIR | 62.96\nTRUCK | 62.85\nREG AIR | 62.33\n(7 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0,
+        "chart_ok": true
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What percentage of line items were received later than their commit date, broken down by ship mode?",
+        "message": "Late receipts were consistently around 62%\u201363% across ship modes. FOB had the highest late-receipt percentage at 63.46%, while REG AIR had the lowest at 62.33%.\n\n- SHIP: 63.12%; MAIL and RAIL: 63.06% each.\n- AIR: 62.96%; TRUCK: 62.85%.\n- The remaining mode, FOB, was 63.46%.",
+        "sql": "SELECT\n  l_shipmode AS ship_mode,\n  ROUND(\n    100.0 * SUM(CASE WHEN l_receiptdate > l_commitdate THEN 1 ELSE 0 END) / COUNT(*),\n    2\n  ) AS late_receipt_percentage\nFROM lineitem\nGROUP BY l_shipmode\nORDER BY l_shipmode",
+        "assumptions": [
+          "For each ship mode, calculate late receipts as the percentage of its line items where receipt date is later than commit date."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "chart",
+          "chart_type": "bar",
+          "x": "ship_mode",
+          "y": [
+            "late_receipt_percentage"
+          ],
+          "series": null,
+          "title": "Late Receipt Percentage by Ship Mode"
+        },
+        "result_preview": "ship_mode | late_receipt_percentage\nAIR | 62.96\nFOB | 63.46\nMAIL | 63.06\nRAIL | 63.06\nREG AIR | 62.33\nSHIP | 63.12\nTRUCK | 62.85\n(7 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  l_shipmode AS ship_mode,\n  ROUND(\n    100.0 * SUM(CASE WHEN l_receiptdate > l_commitdate THEN 1 ELSE 0 END) / COUNT(*),\n    2\n  ) AS late_receipt_percentage\nFROM lineitem\nGROUP BY l_shipmode\nORDER BY l_shipmode",
+            "detail": "ship_mode | late_receipt_percentage\nAIR | 62.96\nFOB | 63.46\nMAIL | 63.06\nRAIL | 63.06\nREG AIR | 62.33\n(7 rows, first 5 shown)"
+          }
+        ]
+      },
+      "latency_s": 5.52,
+      "llm_calls": 3,
+      "prompt_tokens": 9651,
+      "completion_tokens": 344
+    },
+    {
+      "id": "tp-10",
+      "dataset": "tpch",
+      "question": "How many customers have never placed an order?",
+      "category": "anti-join",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS customers_without_orders FROM customer c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.o_custkey = c.c_custkey)",
+      "gold_preview": "customers_without_orders\n500\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "How many customers have never placed an order?",
+        "message": "500 customers have never placed an order.",
+        "sql": "SELECT COUNT(*) AS customers_never_placed_order\nFROM customer AS c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM orders AS o\n  WHERE o.o_custkey = c.c_custkey\n)",
+        "assumptions": [
+          "A customer is considered to have placed an order if at least one orders row has orders.o_custkey equal to customer.c_custkey."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "customers_never_placed_order\n500\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT COUNT(*) AS customers_never_placed_order\nFROM customer AS c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM orders AS o\n  WHERE o.o_custkey = c.c_custkey\n)",
+            "detail": "customers_never_placed_order\n500\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 5.13,
+      "llm_calls": 3,
+      "prompt_tokens": 9387,
+      "completion_tokens": 225
+    },
+    {
+      "id": "tp-11",
+      "dataset": "tpch",
+      "question": "What is the average order total?",
+      "category": "join fan-out trap",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(avg(o_totalprice), 2) AS avg_order_total FROM orders",
+      "gold_preview": "avg_order_total\n141826.46\n(1 rows)",
+      "score": {
+        "status": "answered",
+        "pass": true,
+        "column_recall": 1.0
+      },
+      "answer": {
+        "status": "answered",
+        "standalone_question": "What is the average order total?",
+        "message": "The average order total is 141,826.46.",
+        "sql": "SELECT\n  ROUND(AVG(o_totalprice), 2) AS average_order_total\nFROM orders",
+        "assumptions": [
+          "Interpret \u201corder total\u201d as the order-level total price (orders.o_totalprice), averaged across all orders."
+        ],
+        "warnings": [],
+        "notes": [],
+        "presentation": {
+          "kind": "text",
+          "chart_type": null,
+          "x": null,
+          "y": [],
+          "series": null,
+          "title": null
+        },
+        "result_preview": "average_order_total\n141826.46\n(1 rows)",
+        "steps": [
+          {
+            "index": 1,
+            "action": "final_sql",
+            "outcome": "final",
+            "sql": "SELECT\n  ROUND(AVG(o_totalprice), 2) AS average_order_total\nFROM orders",
+            "detail": "average_order_total\n141826.46\n(1 rows)"
+          }
+        ]
+      },
+      "latency_s": 4.43,
+      "llm_calls": 3,
+      "prompt_tokens": 9367,
+      "completion_tokens": 196
+    },
+    {
+      "id": "tp-12",
+      "dataset": "tpch",
+      "question": "Which suppliers are the most profitable?",
+      "category": "ambiguity",
+      "expected_type": "clarification",
+      "gold_sql": null,
+      "gold_preview": null,
+      "score": {
+        "status": "clarify",
+        "pass": true
+      },
+      "answer": {
+        "status": "clarify",
+        "standalone_question": "Which suppliers are the most profitable?",
+        "message": "How should profitability be defined? The data supports supplier-attributed net sales (after discounts), and\u2014by joining each line item to its exact part-supplier listing\u2014estimated gross profit as net sales minus quantity \u00d7 supplier unit cost. Which measure would you like to rank suppliers by?",
+        "sql": null,
+        "assumptions": [],
+        "warnings": [],
+        "notes": [],
+        "presentation": null,
+        "result_preview": null,
+        "steps": []
+      },
+      "latency_s": 2.19,
+      "llm_calls": 1,
+      "prompt_tokens": 4338,
+      "completion_tokens": 98
+    },
+    {
+      "id": "tp-13",
+      "dataset": "tpch",
+      "question": "What was the customer satisfaction score per region?",
+      "category": "unanswerable",
+      "expected_type": "refusal",
+      "gold_sql": null,
+      "gold_preview": null,
+      "score": {
+        "status": "refuse",
+        "pass": true
+      },
+      "answer": {
+        "status": "refuse",
+        "standalone_question": "What was the customer satisfaction score per region?",
+        "message": "Customer satisfaction scores are not available in these tables. The dataset includes customer regions, orders, line items, returns, and fulfillment dates, so I can instead analyze proxies such as return rates, late receipts versus commit dates, or order volume by customer region.",
+        "sql": null,
+        "assumptions": [],
+        "warnings": [],
+        "notes": [],
+        "presentation": null,
+        "result_preview": null,
+        "steps": []
+      },
+      "latency_s": 1.87,
+      "llm_calls": 1,
+      "prompt_tokens": 4340,
+      "completion_tokens": 95
+    }
+  ]
+}

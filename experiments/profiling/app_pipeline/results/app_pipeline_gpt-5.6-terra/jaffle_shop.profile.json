@@ -1,0 +1,238 @@
+{
+  "tables": {
+    "raw_customers": {
+      "primary_key": [
+        "id"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "id": "identifier",
+        "first_name": "text",
+        "last_name": "text"
+      },
+      "units": {
+        "id": null,
+        "first_name": null,
+        "last_name": null
+      }
+    },
+    "raw_orders": {
+      "primary_key": [
+        "id"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "id": "identifier",
+        "user_id": "identifier",
+        "order_date": "time",
+        "status": "dimension"
+      },
+      "units": {
+        "id": null,
+        "user_id": null,
+        "order_date": null,
+        "status": null
+      }
+    },
+    "raw_payments": {
+      "primary_key": [
+        "id"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "id": "identifier",
+        "order_id": "identifier",
+        "payment_method": "dimension",
+        "amount": "measure"
+      },
+      "units": {
+        "id": null,
+        "order_id": null,
+        "payment_method": null,
+        "amount": "cents"
+      }
+    }
+  },
+  "relationships": [
+    {
+      "from": "raw_orders.user_id",
+      "to": "raw_customers.id",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "user_id is explicitly the identifier of the customer placing the order and fully matches customer keys."
+    },
+    {
+      "from": "raw_payments.order_id",
+      "to": "raw_orders.id",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "order_id is explicitly the identifier of the order receiving the payment and fully matches order keys."
+    }
+  ],
+  "semantic_model": {
+    "dataset_summary": "This dataset captures customers, their orders, and payment transactions. `raw_customers` has one row per customer; `raw_orders` links each order to a customer; and `raw_payments` links one or more payment transactions to an order. Orders span 2018-01-01 through 2018-04-09, while payment amounts are stored in cents.",
+    "metrics": [
+      {
+        "name": "customer_count",
+        "table": "raw_customers",
+        "expression": "COUNT(DISTINCT id)",
+        "description": "Number of unique customers.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "order_count",
+        "table": "raw_orders",
+        "expression": "COUNT(DISTINCT id)",
+        "description": "Number of unique orders.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "paying_order_count",
+        "table": "raw_payments",
+        "expression": "COUNT(DISTINCT order_id)",
+        "description": "Number of distinct orders with at least one payment transaction.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "payment_transaction_count",
+        "table": "raw_payments",
+        "expression": "COUNT(DISTINCT id)",
+        "description": "Number of payment transactions.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "payment_amount_usd",
+        "table": "raw_payments",
+        "expression": "SUM(amount) / 100.0",
+        "description": "Total payment amount in dollars.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "average_payment_usd",
+        "table": "raw_payments",
+        "expression": "AVG(amount) / 100.0",
+        "description": "Average payment transaction amount in dollars.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "average_payment_per_paid_order_usd",
+        "table": "raw_payments",
+        "expression": "SUM(amount) / 100.0 / NULLIF(COUNT(DISTINCT order_id), 0)",
+        "description": "Average total payment amount per order that has a payment record.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "orders_per_customer",
+        "table": "raw_orders",
+        "expression": "COUNT(DISTINCT id) * 1.0 / NULLIF(COUNT(DISTINCT user_id), 0)",
+        "description": "Average number of orders per customer who placed at least one order.",
+        "valid": true,
+        "error": null
+      }
+    ],
+    "synonyms": [
+      {
+        "term": "customers",
+        "maps_to": "raw_customers"
+      },
+      {
+        "term": "customer ID",
+        "maps_to": "raw_customers.id"
+      },
+      {
+        "term": "buyer",
+        "maps_to": "raw_customers"
+      },
+      {
+        "term": "orders",
+        "maps_to": "raw_orders"
+      },
+      {
+        "term": "order ID",
+        "maps_to": "raw_orders.id"
+      },
+      {
+        "term": "order date",
+        "maps_to": "raw_orders.order_date"
+      },
+      {
+        "term": "order status",
+        "maps_to": "raw_orders.status"
+      },
+      {
+        "term": "payments",
+        "maps_to": "raw_payments"
+      },
+      {
+        "term": "payment transactions",
+        "maps_to": "raw_payments"
+      },
+      {
+        "term": "payment method",
+        "maps_to": "raw_payments.payment_method"
+      },
+      {
+        "term": "revenue",
+        "maps_to": "payment_amount_usd"
+      },
+      {
+        "term": "sales",
+        "maps_to": "payment_amount_usd"
+      },
+      {
+        "term": "payment amount",
+        "maps_to": "raw_payments.amount"
+      },
+      {
+        "term": "amount paid",
+        "maps_to": "raw_payments.amount"
+      },
+      {
+        "term": "average order payment",
+        "maps_to": "average_payment_per_paid_order_usd"
+      }
+    ],
+    "caveats": [
+      "`raw_payments.amount` is stored in cents; divide by 100.0 to report dollar values.",
+      "Payments are transaction-level, and an order can have multiple payment rows. Aggregate payments to the order level before joining to other order-level analyses if payment totals are being combined with order counts or attributes.",
+      "Joining `raw_orders` to `raw_payments` duplicates orders with multiple payments; therefore, use `COUNT(DISTINCT raw_orders.id)` for order counts after this join.",
+      "`raw_orders.user_id` links to `raw_customers.id`; customers may have no orders, so use a left join from customers when retaining all customers.",
+      "`raw_payments.order_id` links to `raw_orders.id`; not every order is guaranteed to have a payment record, so payment-based revenue represents recorded payments rather than necessarily every order's value.",
+      "Payment amount can be zero, which may represent a non-cash payment component or zero-value transaction; do not automatically treat zero-amount rows as missing data.",
+      "Order status is the current lifecycle status, not a timestamped status history. Filtering by status reflects the current recorded state of each order.",
+      "The available order-date range is 2018-01-01 through 2018-04-09; conclusions about trends are limited to this period.",
+      "There is no order-total amount column. Monetary analysis should use summed payment transactions, with care for split payments and any refunds/adjustments not explicitly identified in the provided schema."
+    ],
+    "example_questions": [
+      "What were total recorded payments in dollars by payment method?",
+      "How many orders were placed each week, broken down by current order status?",
+      "Which customers placed the most orders?",
+      "What is the average total payment per paid order for each payment method?",
+      "How many customers placed an order, and how many customers had no orders?"
+    ]
+  },
+  "analysis": {
+    "llm_enabled": true,
+    "model": "gpt-5.6-terra",
+    "reasoning_effort": "medium",
+    "degraded": false,
+    "notes": [],
+    "llm_calls": 5,
+    "prompt_tokens": 6320,
+    "completion_tokens": 1823,
+    "timings_s": {
+      "load_and_statistics": 0.09,
+      "understanding": 4.27,
+      "candidates": 0.1,
+      "relationship_review": 3.47,
+      "semantic_model": 8.03
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "tables": {
+    "raw_customers": {
+      "primary_key": [
+        "id"
+      ],
+      "roles": {
+        "id": "identifier",
+        "first_name": "descriptive",
+        "last_name": "descriptive"
+      },
+      "units": {}
+    },
+    "raw_orders": {
+      "primary_key": [
+        "id"
+      ],
+      "roles": {
+        "id": "identifier",
+        "user_id": "identifier",
+        "order_date": "time",
+        "status": "descriptive"
+      },
+      "units": {}
+    },
+    "raw_payments": {
+      "primary_key": [
+        "id"
+      ],
+      "roles": {
+        "id": "identifier",
+        "order_id": "identifier",
+        "payment_method": "descriptive",
+        "amount": "measure"
+      },
+      "units": {}
+    }
+  },
+  "relationships": [
+    {
+      "from": "raw_orders.id",
+      "to": "raw_customers.id",
+      "cardinality": "one-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "raw_payments.id",
+      "to": "raw_customers.id",
+      "cardinality": "one-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "raw_customers.id",
+      "to": "raw_orders.id",
+      "cardinality": "one-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "raw_payments.id",
+      "to": "raw_orders.id",
+      "cardinality": "one-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "raw_customers.id",
+      "to": "raw_payments.id",
+      "cardinality": "one-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "raw_orders.id",
+      "to": "raw_payments.id",
+      "cardinality": "one-to-one",
+      "status": "accepted"
+    }
+  ]
+}

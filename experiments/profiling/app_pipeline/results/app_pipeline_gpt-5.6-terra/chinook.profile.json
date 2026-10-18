@@ -1,0 +1,570 @@
+{
+  "tables": {
+    "album": {
+      "primary_key": [
+        "AlbumId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "AlbumId": "identifier",
+        "Title": "text",
+        "ArtistId": "identifier"
+      },
+      "units": {
+        "AlbumId": null,
+        "Title": null,
+        "ArtistId": null
+      }
+    },
+    "artist": {
+      "primary_key": [
+        "ArtistId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "ArtistId": "identifier",
+        "Name": "text"
+      },
+      "units": {
+        "ArtistId": null,
+        "Name": null
+      }
+    },
+    "customer": {
+      "primary_key": [
+        "CustomerId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "CustomerId": "identifier",
+        "FirstName": "text",
+        "LastName": "text",
+        "Company": "text",
+        "Address": "text",
+        "City": "dimension",
+        "State": "dimension",
+        "Country": "dimension",
+        "PostalCode": "text",
+        "Phone": "text",
+        "Fax": "text",
+        "Email": "text",
+        "SupportRepId": "identifier"
+      },
+      "units": {
+        "CustomerId": null,
+        "FirstName": null,
+        "LastName": null,
+        "Company": null,
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "PostalCode": null,
+        "Phone": null,
+        "Fax": null,
+        "Email": null,
+        "SupportRepId": null
+      }
+    },
+    "employee": {
+      "primary_key": [
+        "EmployeeId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "EmployeeId": "identifier",
+        "LastName": "text",
+        "FirstName": "text",
+        "Title": "dimension",
+        "ReportsTo": "identifier",
+        "BirthDate": "time",
+        "HireDate": "time",
+        "Address": "text",
+        "City": "dimension",
+        "State": "dimension",
+        "Country": "dimension",
+        "PostalCode": "text",
+        "Phone": "text",
+        "Fax": "text",
+        "Email": "text"
+      },
+      "units": {
+        "EmployeeId": null,
+        "LastName": null,
+        "FirstName": null,
+        "Title": null,
+        "ReportsTo": null,
+        "BirthDate": null,
+        "HireDate": null,
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "PostalCode": null,
+        "Phone": null,
+        "Fax": null,
+        "Email": null
+      }
+    },
+    "genre": {
+      "primary_key": [
+        "GenreId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "GenreId": "identifier",
+        "Name": "dimension"
+      },
+      "units": {
+        "GenreId": null,
+        "Name": null
+      }
+    },
+    "invoice": {
+      "primary_key": [
+        "InvoiceId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "InvoiceId": "identifier",
+        "CustomerId": "identifier",
+        "InvoiceDate": "time",
+        "BillingAddress": "text",
+        "BillingCity": "dimension",
+        "BillingState": "dimension",
+        "BillingCountry": "dimension",
+        "BillingPostalCode": "text",
+        "Total": "measure"
+      },
+      "units": {
+        "InvoiceId": null,
+        "CustomerId": null,
+        "InvoiceDate": null,
+        "BillingAddress": null,
+        "BillingCity": null,
+        "BillingState": null,
+        "BillingCountry": null,
+        "BillingPostalCode": null,
+        "Total": "USD"
+      }
+    },
+    "invoiceline": {
+      "primary_key": [
+        "InvoiceLineId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "InvoiceLineId": "identifier",
+        "InvoiceId": "identifier",
+        "TrackId": "identifier",
+        "UnitPrice": "measure",
+        "Quantity": "measure"
+      },
+      "units": {
+        "InvoiceLineId": null,
+        "InvoiceId": null,
+        "TrackId": null,
+        "UnitPrice": "USD",
+        "Quantity": "count"
+      }
+    },
+    "mediatype": {
+      "primary_key": [
+        "MediaTypeId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "MediaTypeId": "identifier",
+        "Name": "dimension"
+      },
+      "units": {
+        "MediaTypeId": null,
+        "Name": null
+      }
+    },
+    "playlist": {
+      "primary_key": [
+        "PlaylistId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "PlaylistId": "identifier",
+        "Name": "text"
+      },
+      "units": {
+        "PlaylistId": null,
+        "Name": null
+      }
+    },
+    "playlisttrack": {
+      "primary_key": [
+        "PlaylistId",
+        "TrackId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "PlaylistId": "identifier",
+        "TrackId": "identifier"
+      },
+      "units": {
+        "PlaylistId": null,
+        "TrackId": null
+      }
+    },
+    "track": {
+      "primary_key": [
+        "TrackId"
+      ],
+      "primary_key_source": "llm_verified",
+      "roles": {
+        "TrackId": "identifier",
+        "Name": "text",
+        "AlbumId": "identifier",
+        "MediaTypeId": "identifier",
+        "GenreId": "identifier",
+        "Composer": "text",
+        "Milliseconds": "measure",
+        "Bytes": "measure",
+        "UnitPrice": "measure"
+      },
+      "units": {
+        "TrackId": null,
+        "Name": null,
+        "AlbumId": null,
+        "MediaTypeId": null,
+        "GenreId": null,
+        "Composer": null,
+        "Milliseconds": "milliseconds",
+        "Bytes": "bytes",
+        "UnitPrice": "USD"
+      }
+    }
+  },
+  "relationships": [
+    {
+      "from": "album.ArtistId",
+      "to": "artist.ArtistId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Album ArtistId semantically and exactly references artist ArtistId."
+    },
+    {
+      "from": "customer.SupportRepId",
+      "to": "employee.EmployeeId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Customer SupportRepId identifies the assigned employee."
+    },
+    {
+      "from": "employee.ReportsTo",
+      "to": "employee.EmployeeId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Employee ReportsTo is a self-reference to the manager EmployeeId."
+    },
+    {
+      "from": "invoice.CustomerId",
+      "to": "customer.CustomerId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Invoice CustomerId semantically and exactly references customer CustomerId."
+    },
+    {
+      "from": "invoiceline.InvoiceId",
+      "to": "invoice.InvoiceId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Invoice line InvoiceId semantically and exactly references invoice InvoiceId."
+    },
+    {
+      "from": "invoiceline.TrackId",
+      "to": "track.TrackId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Invoice line TrackId semantically and exactly references track TrackId."
+    },
+    {
+      "from": "playlisttrack.PlaylistId",
+      "to": "playlist.PlaylistId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Playlist-track membership PlaylistId references playlist PlaylistId."
+    },
+    {
+      "from": "playlisttrack.TrackId",
+      "to": "track.TrackId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Playlist-track membership TrackId references track TrackId."
+    },
+    {
+      "from": "track.AlbumId",
+      "to": "album.AlbumId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Track AlbumId semantically and exactly references album AlbumId."
+    },
+    {
+      "from": "track.GenreId",
+      "to": "genre.GenreId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Track GenreId semantically and exactly references genre GenreId."
+    },
+    {
+      "from": "track.MediaTypeId",
+      "to": "mediatype.MediaTypeId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Track MediaTypeId semantically and exactly references mediatype MediaTypeId."
+    }
+  ],
+  "semantic_model": {
+    "dataset_summary": "This music-store dataset covers a catalog of artists, albums, tracks, genres, media types, and playlists, plus customers, employees, invoices, and purchased invoice lines. Sales flow from invoice headers to invoice lines and tracks; tracks roll up to albums and artists and classify by genre and media type. Customers are assigned support representatives, while playlisttrack is a bridge table between playlists and tracks.",
+    "metrics": [
+      {
+        "name": "Total Revenue",
+        "table": "invoice",
+        "expression": "SUM(\"Total\")",
+        "description": "Total invoiced sales in USD.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Invoice Count",
+        "table": "invoice",
+        "expression": "COUNT(DISTINCT \"InvoiceId\")",
+        "description": "Number of customer invoices issued.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Average Invoice Value",
+        "table": "invoice",
+        "expression": "AVG(\"Total\")",
+        "description": "Average invoice total in USD.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Distinct Purchasing Customers",
+        "table": "invoice",
+        "expression": "COUNT(DISTINCT \"CustomerId\")",
+        "description": "Number of customers with at least one invoice.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Units Sold",
+        "table": "invoiceline",
+        "expression": "SUM(\"Quantity\")",
+        "description": "Total track units purchased across invoice lines.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Line Item Revenue",
+        "table": "invoiceline",
+        "expression": "SUM(\"UnitPrice\" * \"Quantity\")",
+        "description": "Revenue calculated from invoice-line prices and quantities, in USD.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Invoice Line Count",
+        "table": "invoiceline",
+        "expression": "COUNT(DISTINCT \"InvoiceLineId\")",
+        "description": "Number of purchased track line items.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Catalog Track Count",
+        "table": "track",
+        "expression": "COUNT(DISTINCT \"TrackId\")",
+        "description": "Number of tracks in the catalog.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Total Catalog Duration Hours",
+        "table": "track",
+        "expression": "SUM(\"Milliseconds\") / 3600000.0",
+        "description": "Combined playback duration of catalog tracks, in hours.",
+        "valid": true,
+        "error": null
+      },
+      {
+        "name": "Average Track Price",
+        "table": "track",
+        "expression": "AVG(\"UnitPrice\")",
+        "description": "Average listed catalog price per track in USD.",
+        "valid": true,
+        "error": null
+      }
+    ],
+    "synonyms": [
+      {
+        "term": "sales",
+        "maps_to": "metric: Total Revenue"
+      },
+      {
+        "term": "revenue",
+        "maps_to": "metric: Total Revenue"
+      },
+      {
+        "term": "invoice revenue",
+        "maps_to": "invoice.Total"
+      },
+      {
+        "term": "invoice total",
+        "maps_to": "invoice.Total"
+      },
+      {
+        "term": "orders",
+        "maps_to": "invoice"
+      },
+      {
+        "term": "purchases",
+        "maps_to": "invoice"
+      },
+      {
+        "term": "order count",
+        "maps_to": "metric: Invoice Count"
+      },
+      {
+        "term": "average order value",
+        "maps_to": "metric: Average Invoice Value"
+      },
+      {
+        "term": "AOV",
+        "maps_to": "metric: Average Invoice Value"
+      },
+      {
+        "term": "buyers",
+        "maps_to": "metric: Distinct Purchasing Customers"
+      },
+      {
+        "term": "customers",
+        "maps_to": "customer"
+      },
+      {
+        "term": "units sold",
+        "maps_to": "metric: Units Sold"
+      },
+      {
+        "term": "track sales",
+        "maps_to": "invoiceline"
+      },
+      {
+        "term": "song sales",
+        "maps_to": "invoiceline"
+      },
+      {
+        "term": "line revenue",
+        "maps_to": "metric: Line Item Revenue"
+      },
+      {
+        "term": "song",
+        "maps_to": "track"
+      },
+      {
+        "term": "music track",
+        "maps_to": "track"
+      },
+      {
+        "term": "track title",
+        "maps_to": "track.Name"
+      },
+      {
+        "term": "album",
+        "maps_to": "album"
+      },
+      {
+        "term": "artist",
+        "maps_to": "artist.Name"
+      },
+      {
+        "term": "performer",
+        "maps_to": "artist.Name"
+      },
+      {
+        "term": "genre",
+        "maps_to": "genre.Name"
+      },
+      {
+        "term": "format",
+        "maps_to": "mediatype.Name"
+      },
+      {
+        "term": "media type",
+        "maps_to": "mediatype.Name"
+      },
+      {
+        "term": "playlist",
+        "maps_to": "playlist.Name"
+      },
+      {
+        "term": "support representative",
+        "maps_to": "customer.SupportRepId -> employee"
+      },
+      {
+        "term": "manager",
+        "maps_to": "employee.ReportsTo -> employee.EmployeeId"
+      },
+      {
+        "term": "invoice date",
+        "maps_to": "invoice.InvoiceDate"
+      },
+      {
+        "term": "billing country",
+        "maps_to": "invoice.BillingCountry"
+      },
+      {
+        "term": "customer country",
+        "maps_to": "customer.Country"
+      },
+      {
+        "term": "track duration",
+        "maps_to": "track.Milliseconds"
+      }
+    ],
+    "caveats": [
+      "All monetary amounts (invoice.Total, invoiceline.UnitPrice, and track.UnitPrice) are already expressed in USD; do not apply a cents-to-dollars conversion.",
+      "Use invoice.Total for invoice-level revenue. Joining invoice to invoiceline repeats each invoice header once per line, so SUM(invoice.Total) after that join will overstate revenue unless invoices are deduplicated or aggregation is performed before the join.",
+      "Line Item Revenue (SUM(invoiceline.UnitPrice * invoiceline.Quantity)) is the correct sales measure when analyzing purchased tracks, genres, albums, or artists. It may be subject to normal floating-point precision differences from invoice totals.",
+      "Invoice lines are at purchased-track grain. Quantity is currently always 1 in this data, but revenue logic should still multiply UnitPrice by Quantity.",
+      "track.UnitPrice is the catalog list price, whereas invoiceline.UnitPrice is the price actually charged on a purchase; use the latter for realized sales.",
+      "playlisttrack is a many-to-many bridge: tracks can belong to multiple playlists. Joining it to sales multiplies sales by playlist membership unless the query deliberately analyzes sales by playlist or deduplicates at the intended grain.",
+      "Track-to-album-to-artist joins are many-to-one from tracks and invoice lines, suitable for attributing line-item revenue to albums and artists. Album and artist counts should use DISTINCT identifiers when joined to tracks or sales.",
+      "employee.ReportsTo is a nullable self-reference to employee.EmployeeId; the top-level employee has no manager. Alias employee separately for employee versus manager queries.",
+      "Customer location and invoice billing location are distinct snapshots/attributes. Use invoice BillingCountry/City for where an invoice was billed and customer Country/City for the customer profile.",
+      "Company, customer State, invoice BillingState, and several contact fields are frequently nullable. Composer is also nullable for a material share of tracks.",
+      "Invoice dates span 2009-01-01 through 2013-12-22; trend analyses are limited to this observed period."
+    ],
+    "example_questions": [
+      "What were total revenue and invoice count by year and billing country?",
+      "Which artists generated the most line-item revenue, and how many tracks did each sell?",
+      "What are the top genres by units sold and revenue?",
+      "Which customers have spent the most in total, and who is their assigned support representative?",
+      "Which playlists contain the most tracks, and what genres are most represented in each playlist?"
+    ]
+  },
+  "analysis": {
+    "llm_enabled": true,
+    "model": "gpt-5.6-terra",
+    "reasoning_effort": "medium",
+    "degraded": false,
+    "notes": [],
+    "llm_calls": 13,
+    "prompt_tokens": 29867,
+    "completion_tokens": 5670,
+    "timings_s": {
+      "load_and_statistics": 0.35,
+      "understanding": 6.62,
+      "candidates": 0.48,
+      "relationship_review": 9.03,
+      "semantic_model": 10.33
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "experiment": "app_pipeline_gpt-5.6-terra",
+  "datasets": {
+    "jaffle_shop": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 2,
+        "accepted": 2,
+        "expected": 2,
+        "false_positives": [],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 3,
+        "total": 3,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 11,
+        "total": 11,
+        "errors": []
+      },
+      "units": {
+        "hits": 1,
+        "total": 1,
+        "errors": []
+      },
+      "latency_s": 15.99
+    },
+    "chinook": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 11,
+        "accepted": 11,
+        "expected": 11,
+        "false_positives": [],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 11,
+        "total": 11,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 64,
+        "total": 64,
+        "errors": []
+      },
+      "units": {
+        "hits": 0,
+        "total": 0,
+        "errors": []
+      },
+      "latency_s": 26.9
+    },
+    "tpch": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 9,
+        "accepted": 9,
+        "expected": 9,
+        "false_positives": [],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 8,
+        "total": 8,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 58,
+        "total": 58,
+        "errors": []
+      },
+      "units": {
+        "hits": 0,
+        "total": 0,
+        "errors": []
+      },
+      "latency_s": 24.49
+    }
+  }
+}

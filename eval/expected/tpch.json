@@ -1,0 +1,478 @@
+{
+  "dataset": "tpch",
+  "description": "TPC-H decision-support benchmark at scale factor 0.01: regions, nations, customers, suppliers, parts, orders, line items (8 CSVs, ~87k rows). Several questions are natural-language versions of official TPC-H queries.",
+  "source": "Generated with DuckDB's tpch extension: CALL dbgen(sf = 0.01)",
+  "license": "TPC-H specification data generator (free to use for benchmarking/evaluation)",
+  "tables": {
+    "customer": 1500,
+    "lineitem": 60175,
+    "nation": 25,
+    "orders": 15000,
+    "part": 2000,
+    "partsupp": 8000,
+    "region": 5,
+    "supplier": 100
+  },
+  "total_rows": 86805,
+  "relationship_detection": {
+    "expected": 9,
+    "detected": 0,
+    "correct": 0,
+    "precision": null,
+    "recall": 0.0,
+    "missed": [
+      "customer.c_nationkey -> nation.n_nationkey",
+      "lineitem.l_orderkey -> orders.o_orderkey",
+      "lineitem.l_partkey -> part.p_partkey",
+      "lineitem.l_suppkey -> supplier.s_suppkey",
+      "nation.n_regionkey -> region.r_regionkey",
+      "orders.o_custkey -> customer.c_custkey",
+      "partsupp.ps_partkey -> part.p_partkey",
+      "partsupp.ps_suppkey -> supplier.s_suppkey",
+      "supplier.s_nationkey -> nation.n_nationkey"
+    ],
+    "false_positives": []
+  },
+  "questions": [
+    {
+      "id": "tp-01",
+      "question": "How many orders were placed in 1995?",
+      "category": "aggregation + date filter",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS orders FROM orders WHERE year(o_orderdate) = 1995",
+      "expected": {
+        "columns": [
+          "orders"
+        ],
+        "rows": [
+          [
+            2204
+          ]
+        ],
+        "row_count": 1
+      }
+    },
+    {
+      "id": "tp-02",
+      "question": "How many customers are in each market segment?",
+      "category": "aggregation",
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "segment",
+        "y": "customers"
+      },
+      "gold_sql": "SELECT c_mktsegment AS segment, count(*) AS customers FROM customer GROUP BY segment ORDER BY customers DESC, segment",
+      "order_matters": true,
+      "expected": {
+        "columns": [
+          "segment",
+          "customers"
+        ],
+        "rows": [
+          [
+            "BUILDING",
+            337
+          ],
+          [
+            "AUTOMOBILE",
+            302
+          ],
+          [
+            "HOUSEHOLD",
+            294
+          ],
+          [
+            "MACHINERY",
+            288
+          ],
+          [
+            "FURNITURE",
+            279
+          ]
+        ],
+        "row_count": 5
+      }
+    },
+    {
+      "id": "tp-03",
+      "question": "Show total revenue per year.",
+      "category": "time series + metric definition",
+      "expected_type": "chart",
+      "chart": {
+        "type": "line",
+        "x": "year",
+        "y": "revenue"
+      },
+      "gold_sql": "SELECT year(o.o_orderdate) AS year, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM lineitem l JOIN orders o ON o.o_orderkey = l.l_orderkey GROUP BY year ORDER BY year",
+      "order_matters": true,
+      "tolerance": 0.01,
+      "expected": {
+        "columns": [
+          "year",
+          "revenue"
+        ],
+        "rows": [
+          [
+            1992,
+            308482375.34
+          ],
+          [
+            1993,
+            316544935.44
+          ],
+          [
+            1994,
+            316270913.18
+          ],
+          [
+            1995,
+            303910494.1
+          ],
+          [
+            1996,
+            311928357.78
+          ],
+          [
+            1997,
+            307992639.49
+          ],
+          [
+            1998,
+            180005226.76
+          ]
+        ],
+        "row_count": 7
+      }
+    },
+    {
+      "id": "tp-04",
+      "question": "What is the revenue by region?",
+      "category": "multi-hop join (5 tables)",
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "region",
+        "y": "revenue"
+      },
+      "gold_sql": "SELECT r.r_name AS region, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM lineitem l JOIN orders o ON o.o_orderkey = l.l_orderkey JOIN customer c ON c.c_custkey = o.o_custkey JOIN nation n ON n.n_nationkey = c.c_nationkey JOIN region r ON r.r_regionkey = n.n_regionkey GROUP BY region ORDER BY revenue DESC",
+      "order_matters": true,
+      "tolerance": 0.01,
+      "notes": "Region is reached via the customer's nation.",
+      "expected": {
+        "columns": [
+          "region",
+          "revenue"
+        ],
+        "rows": [
+          [
+            "MIDDLE EAST",
+            451328736.42
+          ],
+          [
+            "AFRICA",
+            427985211.41
+          ],
+          [
+            "AMERICA",
+            397598380.19
+          ],
+          [
+            "ASIA",
+            397022970.41
+          ],
+          [
+            "EUROPE",
+            371199643.67
+          ]
+        ],
+        "row_count": 5
+      }
+    },
+    {
+      "id": "tp-05",
+      "question": "Which 5 nations had the most revenue from local suppliers in Asia during 1994?",
+      "category": "official TPC-H Q5",
+      "expected_type": "table",
+      "gold_sql": "SELECT n.n_name AS nation, round(sum(l.l_extendedprice * (1 - l.l_discount)), 2) AS revenue FROM customer c JOIN orders o ON c.c_custkey = o.o_custkey JOIN lineitem l ON l.l_orderkey = o.o_orderkey JOIN supplier s ON l.l_suppkey = s.s_suppkey AND c.c_nationkey = s.s_nationkey JOIN nation n ON s.s_nationkey = n.n_nationkey JOIN region r ON n.n_regionkey = r.r_regionkey WHERE r.r_name = 'ASIA' AND o.o_orderdate >= DATE '1994-01-01' AND o.o_orderdate < DATE '1995-01-01' GROUP BY nation ORDER BY revenue DESC LIMIT 5",
+      "order_matters": true,
+      "tolerance": 0.01,
+      "expected": {
+        "columns": [
+          "nation",
+          "revenue"
+        ],
+        "rows": [
+          [
+            "VIETNAM",
+            1000926.7
+          ],
+          [
+            "CHINA",
+            740210.76
+          ],
+          [
+            "JAPAN",
+            660651.24
+          ],
+          [
+            "INDONESIA",
+            566379.53
+          ],
+          [
+            "INDIA",
+            422874.68
+          ]
+        ],
+        "row_count": 5
+      }
+    },
+    {
+      "id": "tp-06",
+      "question": "Summarize quantity, price and average discount of line items shipped on or before 1998-09-02, grouped by return flag and line status.",
+      "category": "official TPC-H Q1",
+      "expected_type": "table",
+      "gold_sql": "SELECT l_returnflag, l_linestatus, sum(l_quantity) AS sum_qty, round(sum(l_extendedprice), 2) AS sum_base_price, round(sum(l_extendedprice * (1 - l_discount)), 2) AS sum_disc_price, round(avg(l_discount), 4) AS avg_disc, count(*) AS count_order FROM lineitem WHERE l_shipdate <= DATE '1998-09-02' GROUP BY l_returnflag, l_linestatus ORDER BY l_returnflag, l_linestatus",
+      "order_matters": true,
+      "tolerance": 0.01,
+      "expected": {
+        "columns": [
+          "l_returnflag",
+          "l_linestatus",
+          "sum_qty",
+          "sum_base_price",
+          "sum_disc_price",
+          "avg_disc",
+          "count_order"
+        ],
+        "rows": [
+          [
+            "A",
+            "F",
+            380456.0,
+            532348211.65,
+            505822441.49,
+            0.0501,
+            14876
+          ],
+          [
+            "N",
+            "F",
+            8971.0,
+            12384801.37,
+            11798257.21,
+            0.0478,
+            348
+          ],
+          [
+            "N",
+            "O",
+            742802.0,
+            1041502841.45,
+            989737518.63,
+            0.0499,
+            29181
+          ],
+          [
+            "R",
+            "F",
+            381449.0,
+            534594445.35,
+            507996454.41,
+            0.0498,
+            14902
+          ]
+        ],
+        "row_count": 4
+      }
+    },
+    {
+      "id": "tp-07",
+      "question": "Who are the top 10 customers by total order value?",
+      "category": "join + ranking",
+      "expected_type": "table",
+      "gold_sql": "SELECT c.c_name AS customer, round(sum(o.o_totalprice), 2) AS total_order_value FROM customer c JOIN orders o ON o.o_custkey = c.c_custkey GROUP BY customer ORDER BY total_order_value DESC LIMIT 10",
+      "order_matters": true,
+      "tolerance": 0.01,
+      "expected": {
+        "columns": [
+          "customer",
+          "total_order_value"
+        ],
+        "rows": [
+          [
+            "Customer#000001489",
+            5408941.28
+          ],
+          [
+            "Customer#000000214",
+            4674894.73
+          ],
+          [
+            "Customer#000001396",
+            4644936.89
+          ],
+          [
+            "Customer#000001246",
+            4642942.33
+          ],
+          [
+            "Customer#000000073",
+            4638819.21
+          ],
+          [
+            "Customer#000000643",
+            4555789.04
+          ],
+          [
+            "Customer#000001318",
+            4520525.11
+          ],
+          [
+            "Customer#000001150",
+            4516089.38
+          ],
+          [
+            "Customer#000000898",
+            4460059.6
+          ],
+          [
+            "Customer#000000943",
+            4432159.86
+          ]
+        ],
+        "row_count": 10
+      }
+    },
+    {
+      "id": "tp-08",
+      "question": "What percentage of line items were shipped later than their commit date?",
+      "category": "ratio + date comparison",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(100.0 * count(*) FILTER (WHERE l_receiptdate > l_commitdate) / count(*), 2) AS late_pct FROM lineitem",
+      "tolerance": 0.01,
+      "notes": "'Shipped late' is interpreted as received after the committed date.",
+      "expected": {
+        "columns": [
+          "late_pct"
+        ],
+        "rows": [
+          [
+            62.98
+          ]
+        ],
+        "row_count": 1
+      }
+    },
+    {
+      "id": "tp-09",
+      "question": "Break that down by ship mode.",
+      "category": "follow-up",
+      "context": [
+        "tp-08"
+      ],
+      "expected_type": "chart",
+      "chart": {
+        "type": "bar",
+        "x": "ship_mode",
+        "y": "late_pct"
+      },
+      "gold_sql": "SELECT l_shipmode AS ship_mode, round(100.0 * count(*) FILTER (WHERE l_receiptdate > l_commitdate) / count(*), 2) AS late_pct FROM lineitem GROUP BY ship_mode ORDER BY late_pct DESC",
+      "order_matters": true,
+      "tolerance": 0.01,
+      "expected": {
+        "columns": [
+          "ship_mode",
+          "late_pct"
+        ],
+        "rows": [
+          [
+            "FOB",
+            63.46
+          ],
+          [
+            "SHIP",
+            63.12
+          ],
+          [
+            "MAIL",
+            63.06
+          ],
+          [
+            "RAIL",
+            63.06
+          ],
+          [
+            "AIR",
+            62.96
+          ],
+          [
+            "TRUCK",
+            62.85
+          ],
+          [
+            "REG AIR",
+            62.33
+          ]
+        ],
+        "row_count": 7
+      }
+    },
+    {
+      "id": "tp-10",
+      "question": "How many customers have never placed an order?",
+      "category": "anti-join",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT count(*) AS customers_without_orders FROM customer c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.o_custkey = c.c_custkey)",
+      "expected": {
+        "columns": [
+          "customers_without_orders"
+        ],
+        "rows": [
+          [
+            500
+          ]
+        ],
+        "row_count": 1
+      }
+    },
+    {
+      "id": "tp-11",
+      "question": "What is the average order total?",
+      "category": "join fan-out trap",
+      "expected_type": "scalar",
+      "gold_sql": "SELECT round(avg(o_totalprice), 2) AS avg_order_total FROM orders",
+      "tolerance": 0.01,
+      "notes": "Joining orders to lineitem before averaging o_totalprice weights orders by their line count.",
+      "expected": {
+        "columns": [
+          "avg_order_total"
+        ],
+        "rows": [
+          [
+            141826.46
+          ]
+        ],
+        "row_count": 1
+      }
+    },
+    {
+      "id": "tp-12",
+      "question": "Which suppliers are the most profitable?",
+      "category": "ambiguity",
+      "expected_type": "clarification",
+      "gold_sql": null,
+      "notes": "Profit needs a definition (revenue minus ps_supplycost * quantity?) and a time range; assistant should state assumptions or ask.",
+      "expected": null
+    },
+    {
+      "id": "tp-13",
+      "question": "What was the customer satisfaction score per region?",
+      "category": "unanswerable",
+      "expected_type": "refusal",
+      "gold_sql": null,
+      "notes": "No satisfaction or rating data exists.",
+      "expected": null
+    }
+  ]
+}

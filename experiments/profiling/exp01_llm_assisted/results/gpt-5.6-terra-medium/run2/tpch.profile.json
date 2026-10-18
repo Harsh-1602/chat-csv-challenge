@@ -1,0 +1,1128 @@
+{
+  "tables": {
+    "customer": {
+      "entity": "customer",
+      "description": "Contains customer master records, including contact details, nation, account balance, and market segment.",
+      "grain": "one row per customer",
+      "llm_primary_key": [
+        "c_custkey"
+      ],
+      "primary_key": [
+        "c_custkey"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "c_custkey": "identifier",
+        "c_name": "text",
+        "c_address": "text",
+        "c_nationkey": "identifier",
+        "c_phone": "text",
+        "c_acctbal": "measure",
+        "c_mktsegment": "dimension",
+        "c_comment": "text"
+      },
+      "units": {
+        "c_custkey": null,
+        "c_name": null,
+        "c_address": null,
+        "c_nationkey": null,
+        "c_phone": null,
+        "c_acctbal": "currency amount",
+        "c_mktsegment": null,
+        "c_comment": null
+      },
+      "descriptions": {
+        "c_custkey": "Unique identifier for the customer.",
+        "c_name": "Name of the customer.",
+        "c_address": "Customer's address.",
+        "c_nationkey": "Identifier of the nation associated with the customer.",
+        "c_phone": "Customer's phone number.",
+        "c_acctbal": "Customer account balance, which may be negative.",
+        "c_mktsegment": "Market segment assigned to the customer.",
+        "c_comment": "Free-text comment about the customer."
+      },
+      "references": {
+        "c_custkey": null,
+        "c_name": null,
+        "c_address": null,
+        "c_nationkey": "nation",
+        "c_phone": null,
+        "c_acctbal": null,
+        "c_mktsegment": null,
+        "c_comment": null
+      }
+    },
+    "lineitem": {
+      "entity": "order line item",
+      "description": "This table records the individual part-and-supplier items associated with customer orders, including fulfillment dates, pricing, discounts, taxes, and shipping details.",
+      "grain": "one row per line item within an order",
+      "llm_primary_key": [
+        "l_orderkey",
+        "l_linenumber"
+      ],
+      "primary_key": [
+        "l_orderkey",
+        "l_linenumber"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "l_orderkey": "identifier",
+        "l_partkey": "identifier",
+        "l_suppkey": "identifier",
+        "l_linenumber": "identifier",
+        "l_quantity": "measure",
+        "l_extendedprice": "measure",
+        "l_discount": "measure",
+        "l_tax": "measure",
+        "l_returnflag": "dimension",
+        "l_linestatus": "dimension",
+        "l_shipdate": "time",
+        "l_commitdate": "time",
+        "l_receiptdate": "time",
+        "l_shipinstruct": "dimension",
+        "l_shipmode": "dimension",
+        "l_comment": "text"
+      },
+      "units": {
+        "l_orderkey": null,
+        "l_partkey": null,
+        "l_suppkey": null,
+        "l_linenumber": null,
+        "l_quantity": "count",
+        "l_extendedprice": null,
+        "l_discount": "fraction 0-1",
+        "l_tax": "fraction 0-1",
+        "l_returnflag": null,
+        "l_linestatus": null,
+        "l_shipdate": null,
+        "l_commitdate": null,
+        "l_receiptdate": null,
+        "l_shipinstruct": null,
+        "l_shipmode": null,
+        "l_comment": null
+      },
+      "descriptions": {
+        "l_orderkey": "Identifier of the order containing this line item.",
+        "l_partkey": "Identifier of the part ordered on this line item.",
+        "l_suppkey": "Identifier of the supplier providing the ordered part.",
+        "l_linenumber": "Sequential line number that identifies this item within its order.",
+        "l_quantity": "Quantity of the part ordered on the line item.",
+        "l_extendedprice": "Extended pre-discount price for the ordered quantity on the line item.",
+        "l_discount": "Discount rate applied to the line item's extended price.",
+        "l_tax": "Tax rate applied to the line item.",
+        "l_returnflag": "Code indicating the line item's return status.",
+        "l_linestatus": "Code indicating whether the line item is open or fulfilled.",
+        "l_shipdate": "Date the line item was shipped.",
+        "l_commitdate": "Date the supplier committed to fulfill the line item.",
+        "l_receiptdate": "Date the line item was received.",
+        "l_shipinstruct": "Shipping instruction for handling delivery of the line item.",
+        "l_shipmode": "Mode of transport used to ship the line item.",
+        "l_comment": "Free-text comment associated with the line item."
+      },
+      "references": {
+        "l_orderkey": "order",
+        "l_partkey": "part",
+        "l_suppkey": "supplier",
+        "l_linenumber": null,
+        "l_quantity": null,
+        "l_extendedprice": null,
+        "l_discount": null,
+        "l_tax": null,
+        "l_returnflag": null,
+        "l_linestatus": null,
+        "l_shipdate": null,
+        "l_commitdate": null,
+        "l_receiptdate": null,
+        "l_shipinstruct": null,
+        "l_shipmode": null,
+        "l_comment": null
+      }
+    },
+    "nation": {
+      "entity": "nation",
+      "description": "Contains the nations in the dataset and their associated regions.",
+      "grain": "one row per nation",
+      "llm_primary_key": [
+        "n_nationkey"
+      ],
+      "primary_key": [
+        "n_nationkey"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "n_nationkey": "identifier",
+        "n_name": "text",
+        "n_regionkey": "identifier",
+        "n_comment": "text"
+      },
+      "units": {
+        "n_nationkey": null,
+        "n_name": null,
+        "n_regionkey": null,
+        "n_comment": null
+      },
+      "descriptions": {
+        "n_nationkey": "Unique identifier for the nation.",
+        "n_name": "Name of the nation.",
+        "n_regionkey": "Identifier of the region to which the nation belongs.",
+        "n_comment": "Free-text comment associated with the nation."
+      },
+      "references": {
+        "n_nationkey": null,
+        "n_name": null,
+        "n_regionkey": "region",
+        "n_comment": null
+      }
+    },
+    "orders": {
+      "entity": "order",
+      "description": "Contains order header records, including the customer, status, total price, order date, priority, and assigned clerk.",
+      "grain": "one row per order",
+      "llm_primary_key": [
+        "o_orderkey"
+      ],
+      "primary_key": [
+        "o_orderkey"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "o_orderkey": "identifier",
+        "o_custkey": "identifier",
+        "o_orderstatus": "dimension",
+        "o_totalprice": "measure",
+        "o_orderdate": "time",
+        "o_orderpriority": "dimension",
+        "o_clerk": "text",
+        "o_shippriority": "dimension",
+        "o_comment": "text"
+      },
+      "units": {
+        "o_orderkey": null,
+        "o_custkey": null,
+        "o_orderstatus": null,
+        "o_totalprice": null,
+        "o_orderdate": null,
+        "o_orderpriority": null,
+        "o_clerk": null,
+        "o_shippriority": null,
+        "o_comment": null
+      },
+      "descriptions": {
+        "o_orderkey": "Unique identifier for the order.",
+        "o_custkey": "Identifier of the customer that placed the order.",
+        "o_orderstatus": "Current status code of the order, such as open, filled, or pending.",
+        "o_totalprice": "Total monetary price of the order.",
+        "o_orderdate": "Date on which the order was placed.",
+        "o_orderpriority": "Priority assigned to the order.",
+        "o_clerk": "Identifier of the clerk assigned to process the order.",
+        "o_shippriority": "Shipping priority code assigned to the order; all observed values are 0.",
+        "o_comment": "Free-text comment associated with the order."
+      },
+      "references": {
+        "o_orderkey": null,
+        "o_custkey": "customer",
+        "o_orderstatus": null,
+        "o_totalprice": null,
+        "o_orderdate": null,
+        "o_orderpriority": null,
+        "o_clerk": null,
+        "o_shippriority": null,
+        "o_comment": null
+      }
+    },
+    "part": {
+      "entity": "part",
+      "description": "Contains product part master data, including manufacturer, brand, type, size, packaging, and retail price.",
+      "grain": "one row per part",
+      "llm_primary_key": [
+        "p_partkey"
+      ],
+      "primary_key": [
+        "p_partkey"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "p_partkey": "identifier",
+        "p_name": "text",
+        "p_mfgr": "dimension",
+        "p_brand": "dimension",
+        "p_type": "dimension",
+        "p_size": "dimension",
+        "p_container": "dimension",
+        "p_retailprice": "measure",
+        "p_comment": "text"
+      },
+      "units": {
+        "p_partkey": null,
+        "p_name": null,
+        "p_mfgr": null,
+        "p_brand": null,
+        "p_type": null,
+        "p_size": null,
+        "p_container": null,
+        "p_retailprice": "USD",
+        "p_comment": null
+      },
+      "descriptions": {
+        "p_partkey": "Unique identifier for the part.",
+        "p_name": "Descriptive name of the part.",
+        "p_mfgr": "Manufacturer associated with the part.",
+        "p_brand": "Brand designation of the part.",
+        "p_type": "Product type and material/style classification of the part.",
+        "p_size": "Categorical size designation for the part.",
+        "p_container": "Container or packaging format for the part.",
+        "p_retailprice": "Listed retail price of the part.",
+        "p_comment": "Free-text comment about the part."
+      },
+      "references": {
+        "p_partkey": null,
+        "p_name": null,
+        "p_mfgr": null,
+        "p_brand": null,
+        "p_type": null,
+        "p_size": null,
+        "p_container": null,
+        "p_retailprice": null,
+        "p_comment": null
+      }
+    },
+    "partsupp": {
+      "entity": "part supplier offering",
+      "description": "This table records the inventory availability and supply cost for a part offered by a supplier.",
+      "grain": "one row per part and supplier combination",
+      "llm_primary_key": [
+        "ps_partkey",
+        "ps_suppkey"
+      ],
+      "primary_key": [
+        "ps_partkey",
+        "ps_suppkey"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "ps_partkey": "identifier",
+        "ps_suppkey": "identifier",
+        "ps_availqty": "measure",
+        "ps_supplycost": "measure",
+        "ps_comment": "text"
+      },
+      "units": {
+        "ps_partkey": null,
+        "ps_suppkey": null,
+        "ps_availqty": "count",
+        "ps_supplycost": "currency amount",
+        "ps_comment": null
+      },
+      "descriptions": {
+        "ps_partkey": "Identifier of the part supplied.",
+        "ps_suppkey": "Identifier of the supplier that supplies the part.",
+        "ps_availqty": "Quantity of the part currently available from the supplier.",
+        "ps_supplycost": "Cost to procure one unit of the part from the supplier.",
+        "ps_comment": "Free-text comment about the part-supplier offering."
+      },
+      "references": {
+        "ps_partkey": "part",
+        "ps_suppkey": "supplier",
+        "ps_availqty": null,
+        "ps_supplycost": null,
+        "ps_comment": null
+      }
+    },
+    "region": {
+      "entity": "region",
+      "description": "This table lists geographic regions used to group nations.",
+      "grain": "one row per geographic region",
+      "llm_primary_key": [
+        "r_regionkey"
+      ],
+      "primary_key": [
+        "r_regionkey"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "r_regionkey": "identifier",
+        "r_name": "dimension",
+        "r_comment": "text"
+      },
+      "units": {
+        "r_regionkey": null,
+        "r_name": null,
+        "r_comment": null
+      },
+      "descriptions": {
+        "r_regionkey": "Unique identifier for the region.",
+        "r_name": "Name of the geographic region.",
+        "r_comment": "Free-text comment about the region."
+      },
+      "references": {
+        "r_regionkey": null,
+        "r_name": null,
+        "r_comment": null
+      }
+    },
+    "supplier": {
+      "entity": "supplier",
+      "description": "This table contains supplier master records, including contact details, national affiliation, account balance, and comments.",
+      "grain": "One row per supplier.",
+      "llm_primary_key": [
+        "s_suppkey"
+      ],
+      "primary_key": [
+        "s_suppkey"
+      ],
+      "pk_source": "llm_verified",
+      "roles": {
+        "s_suppkey": "identifier",
+        "s_name": "text",
+        "s_address": "text",
+        "s_nationkey": "identifier",
+        "s_phone": "text",
+        "s_acctbal": "measure",
+        "s_comment": "text"
+      },
+      "units": {
+        "s_suppkey": null,
+        "s_name": null,
+        "s_address": null,
+        "s_nationkey": null,
+        "s_phone": null,
+        "s_acctbal": null,
+        "s_comment": null
+      },
+      "descriptions": {
+        "s_suppkey": "Unique identifier for the supplier.",
+        "s_name": "Name or label of the supplier.",
+        "s_address": "Supplier street or mailing address.",
+        "s_nationkey": "Identifier of the nation associated with the supplier.",
+        "s_phone": "Supplier contact telephone number.",
+        "s_acctbal": "Supplier account balance, which may be positive or negative.",
+        "s_comment": "Free-text comment about the supplier."
+      },
+      "references": {
+        "s_suppkey": null,
+        "s_name": null,
+        "s_address": null,
+        "s_nationkey": "nation",
+        "s_phone": null,
+        "s_acctbal": null,
+        "s_comment": null
+      }
+    }
+  },
+  "relationships": [
+    {
+      "id": 5,
+      "from": "orders.o_custkey",
+      "to": "customer.c_custkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 1000,
+      "child_non_null_rows": 15000,
+      "orphan_rows": 0,
+      "parent_coverage": 0.6667,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "o_custkey is explicitly the identifier of the customer placing the order and fully matches customer keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 15.0,
+      "join_warning": "Joining orders to customer repeats each customer row ~15.0x; aggregate customer measures before joining."
+    },
+    {
+      "id": 9,
+      "from": "customer.c_nationkey",
+      "to": "nation.n_nationkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 1500,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "c_nationkey explicitly identifies the customer's nation and fully matches nation keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 60.0,
+      "join_warning": "Joining customer to nation repeats each nation row ~60.0x; aggregate nation measures before joining."
+    },
+    {
+      "id": 12,
+      "from": "supplier.s_nationkey",
+      "to": "nation.n_nationkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 25,
+      "child_non_null_rows": 100,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "s_nationkey explicitly identifies the supplier's nation and fully matches nation keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 4.0,
+      "join_warning": "Joining supplier to nation repeats each nation row ~4.0x; aggregate nation measures before joining."
+    },
+    {
+      "id": 13,
+      "from": "lineitem.l_orderkey",
+      "to": "orders.o_orderkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 15000,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "l_orderkey explicitly identifies the containing order and fully matches order keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 4.012,
+      "join_warning": "Joining lineitem to orders repeats each orders row ~4.012x; aggregate orders measures before joining."
+    },
+    {
+      "id": 17,
+      "from": "lineitem.l_partkey",
+      "to": "part.p_partkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 2000,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "l_partkey explicitly identifies the ordered part and fully matches part keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 30.087,
+      "join_warning": "Joining lineitem to part repeats each part row ~30.087x; aggregate part measures before joining."
+    },
+    {
+      "id": 22,
+      "from": "partsupp.ps_partkey",
+      "to": "part.p_partkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 2000,
+      "child_non_null_rows": 8000,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "ps_partkey explicitly identifies the supplied part and fully matches part keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 4.0,
+      "join_warning": "Joining partsupp to part repeats each part row ~4.0x; aggregate part measures before joining."
+    },
+    {
+      "id": 26,
+      "from": "nation.n_regionkey",
+      "to": "region.r_regionkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 25,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "n_regionkey explicitly identifies the nation\u2019s geographic region and fully matches region keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 5.0,
+      "join_warning": "Joining nation to region repeats each region row ~5.0x; aggregate region measures before joining."
+    },
+    {
+      "id": 28,
+      "from": "lineitem.l_suppkey",
+      "to": "supplier.s_suppkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 100,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "l_suppkey explicitly identifies the supplier providing the line item and fully matches supplier keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 601.75,
+      "join_warning": "Joining lineitem to supplier repeats each supplier row ~601.75x; aggregate supplier measures before joining."
+    },
+    {
+      "id": 31,
+      "from": "partsupp.ps_suppkey",
+      "to": "supplier.s_suppkey",
+      "name_similarity": 1.0,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 100,
+      "child_non_null_rows": 8000,
+      "orphan_rows": 0,
+      "parent_coverage": 1.0,
+      "status": "accepted",
+      "source": "candidate",
+      "llm_decision": "accept",
+      "reason": "ps_suppkey explicitly identifies the supplier in the part-supplier offering and fully matches supplier keys.",
+      "cardinality": "many-to-one",
+      "fan_out": 80.0,
+      "join_warning": "Joining partsupp to supplier repeats each supplier row ~80.0x; aggregate supplier measures before joining."
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "id": 0,
+      "from": "customer.c_nationkey",
+      "to": "customer.c_custkey",
+      "name_similarity": 0.286,
+      "child_column_unique": false,
+      "containment": 0.96,
+      "child_distinct": 25,
+      "child_non_null_rows": 1500,
+      "orphan_rows": 61,
+      "parent_coverage": 0.016
+    },
+    {
+      "id": 1,
+      "from": "lineitem.l_partkey",
+      "to": "customer.c_custkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 0.75,
+      "child_distinct": 2000,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 15044,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 2,
+      "from": "lineitem.l_suppkey",
+      "to": "customer.c_custkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 100,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0667
+    },
+    {
+      "id": 3,
+      "from": "lineitem.l_linenumber",
+      "to": "customer.c_custkey",
+      "name_similarity": 0.444,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 7,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0047
+    },
+    {
+      "id": 4,
+      "from": "nation.n_regionkey",
+      "to": "customer.c_custkey",
+      "name_similarity": 0.143,
+      "child_column_unique": false,
+      "containment": 0.8,
+      "child_distinct": 5,
+      "child_non_null_rows": 25,
+      "orphan_rows": 5,
+      "parent_coverage": 0.0027
+    },
+    {
+      "id": 6,
+      "from": "partsupp.ps_partkey",
+      "to": "customer.c_custkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 0.75,
+      "child_distinct": 2000,
+      "child_non_null_rows": 8000,
+      "orphan_rows": 2000,
+      "parent_coverage": 1.0
+    },
+    {
+      "id": 7,
+      "from": "partsupp.ps_suppkey",
+      "to": "customer.c_custkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 100,
+      "child_non_null_rows": 8000,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0667
+    },
+    {
+      "id": 8,
+      "from": "supplier.s_nationkey",
+      "to": "customer.c_custkey",
+      "name_similarity": 0.286,
+      "child_column_unique": false,
+      "containment": 0.96,
+      "child_distinct": 25,
+      "child_non_null_rows": 100,
+      "orphan_rows": 3,
+      "parent_coverage": 0.016
+    },
+    {
+      "id": 10,
+      "from": "lineitem.l_linenumber",
+      "to": "nation.n_nationkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 7,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 0.28
+    },
+    {
+      "id": 11,
+      "from": "nation.n_regionkey",
+      "to": "nation.n_nationkey",
+      "name_similarity": 0.5,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 5,
+      "child_non_null_rows": 25,
+      "orphan_rows": 0,
+      "parent_coverage": 0.2
+    },
+    {
+      "id": 14,
+      "from": "lineitem.l_linenumber",
+      "to": "orders.o_orderkey",
+      "name_similarity": 0.267,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 7,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0005
+    },
+    {
+      "id": 15,
+      "from": "nation.n_regionkey",
+      "to": "orders.o_orderkey",
+      "name_similarity": 0.364,
+      "child_column_unique": false,
+      "containment": 0.8,
+      "child_distinct": 5,
+      "child_non_null_rows": 25,
+      "orphan_rows": 5,
+      "parent_coverage": 0.0003
+    },
+    {
+      "id": 16,
+      "from": "customer.c_nationkey",
+      "to": "part.p_partkey",
+      "name_similarity": 0.4,
+      "child_column_unique": false,
+      "containment": 0.96,
+      "child_distinct": 25,
+      "child_non_null_rows": 1500,
+      "orphan_rows": 61,
+      "parent_coverage": 0.012
+    },
+    {
+      "id": 18,
+      "from": "lineitem.l_suppkey",
+      "to": "part.p_partkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 100,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 0.05
+    },
+    {
+      "id": 19,
+      "from": "lineitem.l_linenumber",
+      "to": "part.p_partkey",
+      "name_similarity": 0.143,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 7,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 0.0035
+    },
+    {
+      "id": 20,
+      "from": "nation.n_regionkey",
+      "to": "part.p_partkey",
+      "name_similarity": 0.2,
+      "child_column_unique": false,
+      "containment": 0.8,
+      "child_distinct": 5,
+      "child_non_null_rows": 25,
+      "orphan_rows": 5,
+      "parent_coverage": 0.002
+    },
+    {
+      "id": 21,
+      "from": "orders.o_custkey",
+      "to": "part.p_partkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 1000,
+      "child_non_null_rows": 15000,
+      "orphan_rows": 0,
+      "parent_coverage": 0.5
+    },
+    {
+      "id": 23,
+      "from": "partsupp.ps_suppkey",
+      "to": "part.p_partkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 100,
+      "child_non_null_rows": 8000,
+      "orphan_rows": 0,
+      "parent_coverage": 0.05
+    },
+    {
+      "id": 24,
+      "from": "supplier.s_nationkey",
+      "to": "part.p_partkey",
+      "name_similarity": 0.4,
+      "child_column_unique": false,
+      "containment": 0.96,
+      "child_distinct": 25,
+      "child_non_null_rows": 100,
+      "orphan_rows": 3,
+      "parent_coverage": 0.012
+    },
+    {
+      "id": 25,
+      "from": "lineitem.l_linenumber",
+      "to": "region.r_regionkey",
+      "name_similarity": 0.25,
+      "child_column_unique": false,
+      "containment": 0.5714,
+      "child_distinct": 7,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 12932,
+      "parent_coverage": 0.8
+    },
+    {
+      "id": 27,
+      "from": "customer.c_nationkey",
+      "to": "supplier.s_suppkey",
+      "name_similarity": 0.143,
+      "child_column_unique": false,
+      "containment": 0.96,
+      "child_distinct": 25,
+      "child_non_null_rows": 1500,
+      "orphan_rows": 61,
+      "parent_coverage": 0.24
+    },
+    {
+      "id": 29,
+      "from": "lineitem.l_linenumber",
+      "to": "supplier.s_suppkey",
+      "name_similarity": 0.444,
+      "child_column_unique": false,
+      "containment": 1.0,
+      "child_distinct": 7,
+      "child_non_null_rows": 60175,
+      "orphan_rows": 0,
+      "parent_coverage": 0.07
+    },
+    {
+      "id": 30,
+      "from": "nation.n_regionkey",
+      "to": "supplier.s_suppkey",
+      "name_similarity": 0.143,
+      "child_column_unique": false,
+      "containment": 0.8,
+      "child_distinct": 5,
+      "child_non_null_rows": 25,
+      "orphan_rows": 5,
+      "parent_coverage": 0.04
+    },
+    {
+      "id": 32,
+      "from": "supplier.s_nationkey",
+      "to": "supplier.s_suppkey",
+      "name_similarity": 0.143,
+      "child_column_unique": false,
+      "containment": 0.96,
+      "child_distinct": 25,
+      "child_non_null_rows": 100,
+      "orphan_rows": 3,
+      "parent_coverage": 0.24
+    }
+  ],
+  "semantic_model": {
+    "dataset_summary": "This is a purchasing and order-fulfillment dataset covering customers, orders, order line items, parts, suppliers, supplier part offerings, and geographic nation/region dimensions. Orders link customers to their line items; line items link to parts and suppliers, while partsupp records each supplier's offered inventory and unit cost for a part. Customers and suppliers each roll up through nation to region.",
+    "metrics": [
+      {
+        "name": "Order Count",
+        "table": "orders",
+        "expression": "COUNT(*)",
+        "description": "Number of orders.",
+        "valid": true
+      },
+      {
+        "name": "Total Order Value",
+        "table": "orders",
+        "expression": "SUM(o_totalprice)",
+        "description": "Sum of recorded order total prices.",
+        "valid": true
+      },
+      {
+        "name": "Average Order Value",
+        "table": "orders",
+        "expression": "AVG(o_totalprice)",
+        "description": "Average recorded total price per order.",
+        "valid": true
+      },
+      {
+        "name": "Line Item Count",
+        "table": "lineitem",
+        "expression": "COUNT(*)",
+        "description": "Number of order line items.",
+        "valid": true
+      },
+      {
+        "name": "Units Ordered",
+        "table": "lineitem",
+        "expression": "SUM(l_quantity)",
+        "description": "Total quantity ordered across line items.",
+        "valid": true
+      },
+      {
+        "name": "Gross Merchandise Value",
+        "table": "lineitem",
+        "expression": "SUM(l_extendedprice)",
+        "description": "Pre-discount extended value of ordered line items.",
+        "valid": true
+      },
+      {
+        "name": "Discount Amount",
+        "table": "lineitem",
+        "expression": "SUM(l_extendedprice * l_discount)",
+        "description": "Monetary discount applied to line items.",
+        "valid": true
+      },
+      {
+        "name": "Net Line Item Revenue",
+        "table": "lineitem",
+        "expression": "SUM(l_extendedprice * (1 - l_discount))",
+        "description": "Extended value after discount and before tax.",
+        "valid": true
+      },
+      {
+        "name": "Tax-Inclusive Line Item Value",
+        "table": "lineitem",
+        "expression": "SUM(l_extendedprice * (1 - l_discount) * (1 + l_tax))",
+        "description": "Discounted line-item value including tax.",
+        "valid": true
+      },
+      {
+        "name": "Available Inventory Units",
+        "table": "partsupp",
+        "expression": "SUM(ps_availqty)",
+        "description": "Total available units across all part-supplier offerings.",
+        "valid": true
+      }
+    ],
+    "synonyms": [
+      {
+        "term": "customers",
+        "maps_to": "customer"
+      },
+      {
+        "term": "customer ID",
+        "maps_to": "customer.c_custkey"
+      },
+      {
+        "term": "customer balance",
+        "maps_to": "customer.c_acctbal"
+      },
+      {
+        "term": "market segment",
+        "maps_to": "customer.c_mktsegment"
+      },
+      {
+        "term": "orders",
+        "maps_to": "orders"
+      },
+      {
+        "term": "order count",
+        "maps_to": "Order Count"
+      },
+      {
+        "term": "sales",
+        "maps_to": "Total Order Value"
+      },
+      {
+        "term": "order value",
+        "maps_to": "orders.o_totalprice"
+      },
+      {
+        "term": "average order value",
+        "maps_to": "Average Order Value"
+      },
+      {
+        "term": "order date",
+        "maps_to": "orders.o_orderdate"
+      },
+      {
+        "term": "order status",
+        "maps_to": "orders.o_orderstatus"
+      },
+      {
+        "term": "order priority",
+        "maps_to": "orders.o_orderpriority"
+      },
+      {
+        "term": "line items",
+        "maps_to": "lineitem"
+      },
+      {
+        "term": "units sold",
+        "maps_to": "Units Ordered"
+      },
+      {
+        "term": "quantity",
+        "maps_to": "lineitem.l_quantity"
+      },
+      {
+        "term": "gross sales",
+        "maps_to": "Gross Merchandise Value"
+      },
+      {
+        "term": "gross merchandise value",
+        "maps_to": "Gross Merchandise Value"
+      },
+      {
+        "term": "discount",
+        "maps_to": "lineitem.l_discount"
+      },
+      {
+        "term": "discount amount",
+        "maps_to": "Discount Amount"
+      },
+      {
+        "term": "net sales",
+        "maps_to": "Net Line Item Revenue"
+      },
+      {
+        "term": "revenue after discount",
+        "maps_to": "Net Line Item Revenue"
+      },
+      {
+        "term": "shipping date",
+        "maps_to": "lineitem.l_shipdate"
+      },
+      {
+        "term": "delivery date",
+        "maps_to": "lineitem.l_receiptdate"
+      },
+      {
+        "term": "ship mode",
+        "maps_to": "lineitem.l_shipmode"
+      },
+      {
+        "term": "products",
+        "maps_to": "part"
+      },
+      {
+        "term": "product",
+        "maps_to": "part"
+      },
+      {
+        "term": "retail price",
+        "maps_to": "part.p_retailprice"
+      },
+      {
+        "term": "brand",
+        "maps_to": "part.p_brand"
+      },
+      {
+        "term": "manufacturer",
+        "maps_to": "part.p_mfgr"
+      },
+      {
+        "term": "suppliers",
+        "maps_to": "supplier"
+      },
+      {
+        "term": "supplier balance",
+        "maps_to": "supplier.s_acctbal"
+      },
+      {
+        "term": "inventory",
+        "maps_to": "Available Inventory Units"
+      },
+      {
+        "term": "available quantity",
+        "maps_to": "partsupp.ps_availqty"
+      },
+      {
+        "term": "unit supply cost",
+        "maps_to": "partsupp.ps_supplycost"
+      },
+      {
+        "term": "country",
+        "maps_to": "nation.n_name"
+      },
+      {
+        "term": "nation",
+        "maps_to": "nation.n_name"
+      },
+      {
+        "term": "region",
+        "maps_to": "region.r_name"
+      }
+    ],
+    "caveats": [
+      "Monetary fields are stored directly as currency amounts; no cents-to-dollars conversion is required. Currency code is explicitly USD only for part retail price, while other monetary fields are described generically as currency amounts.",
+      "`orders.o_totalprice` is an order-level total. Do not sum it after joining to `lineitem`, because each order is repeated once per line item; aggregate orders first or use `SUM(DISTINCT o_totalprice)` only if each distinct value safely represents one order (generally prefer pre-aggregation).",
+      "Line-item revenue metrics are derived from `l_extendedprice`, `l_discount` (a 0\u20131 fraction), and `l_tax` (a 0\u20131 fraction). `l_extendedprice` is pre-discount; net revenue excludes tax unless using the tax-inclusive metric.",
+      "To connect a line item to a specific supplier offering/cost record, join `lineitem` to `partsupp` on both part and supplier keys: `l_partkey = ps_partkey AND l_suppkey = ps_suppkey`. Joining on only one key can cause fan-out and incorrect totals.",
+      "`partsupp` is at part-supplier grain, so inventory and supply-cost analyses should be aggregated from that table and not joined indiscriminately to line items or parts.",
+      "Joining customer or supplier to nation and region is many-to-one and safe for grouping. Joining orders to customer and line items to orders expands parent rows to child grain; calculate parent-grain metrics before such joins.",
+      "`l_shipdate`, `l_commitdate`, and `l_receiptdate` cover different operational events. Use `o_orderdate` for order-placement trends and the appropriate line-item date for fulfillment or shipping trends.",
+      "Order dates range from 1992-01-01 to 1998-08-02; line-item shipment, commitment, and receipt dates extend into late 1998. Date-based comparisons should account for these different coverage windows.",
+      "`o_shippriority` has only the observed value 0, so it is not useful for segmentation in this dataset.",
+      "Customer and supplier account balances may be negative and are account-balance attributes, not sales, revenue, or payable amounts."
+    ],
+    "example_questions": [
+      "What were net line-item revenue and units ordered by ship year and ship mode?",
+      "Which customer market segments generated the highest total order value by order year?",
+      "What are the top suppliers by net line-item revenue, broken down by supplier nation?",
+      "Which part brands have the highest ordered quantities and gross merchandise value?",
+      "Which regions have the most available inventory units and the highest inventory value at supplier unit cost?"
+    ]
+  },
+  "timings_s": {
+    "p1_stats": 0.55,
+    "p2_llm": 5.04,
+    "p2_verify": 0.03,
+    "p3_candidates": 0.43,
+    "p4_llm_verify": 8.78,
+    "p5_structure": 0.01,
+    "p6_llm_validate": 11.08
+  }
+}

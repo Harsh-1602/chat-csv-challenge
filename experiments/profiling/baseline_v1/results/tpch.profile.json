@@ -1,0 +1,114 @@
+{
+  "tables": {
+    "customer": {
+      "primary_key": null,
+      "roles": {
+        "c_custkey": "measure",
+        "c_name": "descriptive",
+        "c_address": "descriptive",
+        "c_nationkey": "measure",
+        "c_phone": "descriptive",
+        "c_acctbal": "measure",
+        "c_mktsegment": "descriptive",
+        "c_comment": "descriptive"
+      },
+      "units": {}
+    },
+    "lineitem": {
+      "primary_key": null,
+      "roles": {
+        "l_orderkey": "measure",
+        "l_partkey": "measure",
+        "l_suppkey": "measure",
+        "l_linenumber": "measure",
+        "l_quantity": "measure",
+        "l_extendedprice": "measure",
+        "l_discount": "measure",
+        "l_tax": "measure",
+        "l_returnflag": "descriptive",
+        "l_linestatus": "descriptive",
+        "l_shipdate": "time",
+        "l_commitdate": "time",
+        "l_receiptdate": "time",
+        "l_shipinstruct": "descriptive",
+        "l_shipmode": "descriptive",
+        "l_comment": "descriptive"
+      },
+      "units": {}
+    },
+    "nation": {
+      "primary_key": null,
+      "roles": {
+        "n_nationkey": "measure",
+        "n_name": "descriptive",
+        "n_regionkey": "measure",
+        "n_comment": "descriptive"
+      },
+      "units": {}
+    },
+    "orders": {
+      "primary_key": null,
+      "roles": {
+        "o_orderkey": "measure",
+        "o_custkey": "measure",
+        "o_orderstatus": "descriptive",
+        "o_totalprice": "measure",
+        "o_orderdate": "time",
+        "o_orderpriority": "descriptive",
+        "o_clerk": "descriptive",
+        "o_shippriority": "measure",
+        "o_comment": "descriptive"
+      },
+      "units": {}
+    },
+    "part": {
+      "primary_key": null,
+      "roles": {
+        "p_partkey": "measure",
+        "p_name": "descriptive",
+        "p_mfgr": "descriptive",
+        "p_brand": "descriptive",
+        "p_type": "descriptive",
+        "p_size": "measure",
+        "p_container": "descriptive",
+        "p_retailprice": "measure",
+        "p_comment": "descriptive"
+      },
+      "units": {}
+    },
+    "partsupp": {
+      "primary_key": null,
+      "roles": {
+        "ps_partkey": "measure",
+        "ps_suppkey": "measure",
+        "ps_availqty": "measure",
+        "ps_supplycost": "measure",
+        "ps_comment": "descriptive"
+      },
+      "units": {}
+    },
+    "region": {
+      "primary_key": null,
+      "roles": {
+        "r_regionkey": "measure",
+        "r_name": "descriptive",
+        "r_comment": "descriptive"
+      },
+      "units": {}
+    },
+    "supplier": {
+      "primary_key": null,
+      "roles": {
+        "s_suppkey": "measure",
+        "s_name": "descriptive",
+        "s_address": "descriptive",
+        "s_nationkey": "measure",
+        "s_phone": "descriptive",
+        "s_acctbal": "measure",
+        "s_comment": "descriptive"
+      },
+      "units": {}
+    }
+  },
+  "relationships": []
+}

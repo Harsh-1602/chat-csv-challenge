@@ -1,0 +1,280 @@
+{
+  "experiment": "baseline_v1",
+  "datasets": {
+    "jaffle_shop": {
+      "relationships": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "accepted": 6,
+        "expected": 2,
+        "false_positives": [
+          "raw_customers.id->raw_orders.id",
+          "raw_customers.id->raw_payments.id",
+          "raw_orders.id->raw_customers.id",
+          "raw_orders.id->raw_payments.id",
+          "raw_payments.id->raw_customers.id",
+          "raw_payments.id->raw_orders.id"
+        ],
+        "missed": [
+          "raw_orders.user_id->raw_customers.id",
+          "raw_payments.order_id->raw_orders.id"
+        ],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 3,
+        "total": 3,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 11,
+        "total": 11,
+        "errors": []
+      },
+      "units": {
+        "hits": 0,
+        "total": 1,
+        "errors": [
+          {
+            "column": "raw_payments.amount",
+            "expected": "cents",
+            "got": null
+          }
+        ]
+      },
+      "latency_s": 0.08
+    },
+    "chinook": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 0.818,
+        "f1": 0.9,
+        "true_positives": 9,
+        "accepted": 9,
+        "expected": 11,
+        "false_positives": [],
+        "missed": [
+          "customer.supportrepid->employee.employeeid",
+          "employee.reportsto->employee.employeeid"
+        ],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 0.909,
+        "hits": 10,
+        "total": 11,
+        "errors": [
+          {
+            "table": "playlisttrack",
+            "expected": [
+              "PlaylistId",
+              "TrackId"
+            ],
+            "got": []
+          }
+        ]
+      },
+      "roles": {
+        "accuracy": 0.984,
+        "hits": 63,
+        "total": 64,
+        "errors": [
+          {
+            "column": "employee.ReportsTo",
+            "expected": "identifier",
+            "got": "measure"
+          }
+        ]
+      },
+      "units": {
+        "hits": 0,
+        "total": 0,
+        "errors": []
+      },
+      "latency_s": 0.26
+    },
+    "tpch": {
+      "relationships": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "accepted": 0,
+        "expected": 9,
+        "false_positives": [],
+        "missed": [
+          "customer.c_nationkey->nation.n_nationkey",
+          "lineitem.l_orderkey->orders.o_orderkey",
+          "lineitem.l_partkey->part.p_partkey",
+          "lineitem.l_suppkey->supplier.s_suppkey",
+          "nation.n_regionkey->region.r_regionkey",
+          "orders.o_custkey->customer.c_custkey",
+          "partsupp.ps_partkey->part.p_partkey",
+          "partsupp.ps_suppkey->supplier.s_suppkey",
+          "supplier.s_nationkey->nation.n_nationkey"
+        ],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 0.0,
+        "hits": 0,
+        "total": 8,
+        "errors": [
+          {
+            "table": "region",
+            "expected": [
+              "r_regionkey"
+            ],
+            "got": []
+          },
+          {
+            "table": "nation",
+            "expected": [
+              "n_nationkey"
+            ],
+            "got": []
+          },
+          {
+            "table": "supplier",
+            "expected": [
+              "s_suppkey"
+            ],
+            "got": []
+          },
+          {
+            "table": "customer",
+            "expected": [
+              "c_custkey"
+            ],
+            "got": []
+          },
+          {
+            "table": "part",
+            "expected": [
+              "p_partkey"
+            ],
+            "got": []
+          },
+          {
+            "table": "orders",
+            "expected": [
+              "o_orderkey"
+            ],
+            "got": []
+          },
+          {
+            "table": "partsupp",
+            "expected": [
+              "ps_partkey",
+              "ps_suppkey"
+            ],
+            "got": []
+          },
+          {
+            "table": "lineitem",
+            "expected": [
+              "l_orderkey",
+              "l_linenumber"
+            ],
+            "got": []
+          }
+        ]
+      },
+      "roles": {
+        "accuracy": 0.741,
+        "hits": 43,
+        "total": 58,
+        "errors": [
+          {
+            "column": "customer.c_custkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "customer.c_nationkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "lineitem.l_orderkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "lineitem.l_partkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "lineitem.l_suppkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "nation.n_nationkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "nation.n_regionkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "orders.o_orderkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "orders.o_custkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "part.p_partkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "partsupp.ps_partkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "partsupp.ps_suppkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "region.r_regionkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "supplier.s_suppkey",
+            "expected": "identifier",
+            "got": "measure"
+          },
+          {
+            "column": "supplier.s_nationkey",
+            "expected": "identifier",
+            "got": "measure"
+          }
+        ]
+      },
+      "units": {
+        "hits": 0,
+        "total": 0,
+        "errors": []
+      },
+      "latency_s": 0.36
+    }
+  }
+}

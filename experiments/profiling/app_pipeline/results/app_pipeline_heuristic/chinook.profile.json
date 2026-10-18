@@ -1,0 +1,326 @@
+{
+  "tables": {
+    "album": {
+      "primary_key": [
+        "AlbumId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "AlbumId": "identifier",
+        "Title": "text",
+        "ArtistId": "identifier"
+      },
+      "units": {
+        "AlbumId": null,
+        "Title": null,
+        "ArtistId": null
+      }
+    },
+    "artist": {
+      "primary_key": [
+        "ArtistId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "ArtistId": "identifier",
+        "Name": "text"
+      },
+      "units": {
+        "ArtistId": null,
+        "Name": null
+      }
+    },
+    "customer": {
+      "primary_key": [
+        "CustomerId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "CustomerId": "identifier",
+        "FirstName": "text",
+        "LastName": "text",
+        "Company": "dimension",
+        "Address": "text",
+        "City": "text",
+        "State": "dimension",
+        "Country": "dimension",
+        "PostalCode": "text",
+        "Phone": "text",
+        "Fax": "dimension",
+        "Email": "text",
+        "SupportRepId": "identifier"
+      },
+      "units": {
+        "CustomerId": null,
+        "FirstName": null,
+        "LastName": null,
+        "Company": null,
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "PostalCode": null,
+        "Phone": null,
+        "Fax": null,
+        "Email": null,
+        "SupportRepId": null
+      }
+    },
+    "employee": {
+      "primary_key": [
+        "EmployeeId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "EmployeeId": "identifier",
+        "LastName": "text",
+        "FirstName": "text",
+        "Title": "text",
+        "ReportsTo": "measure",
+        "BirthDate": "time",
+        "HireDate": "time",
+        "Address": "text",
+        "City": "dimension",
+        "State": "dimension",
+        "Country": "dimension",
+        "PostalCode": "text",
+        "Phone": "text",
+        "Fax": "text",
+        "Email": "text"
+      },
+      "units": {
+        "EmployeeId": null,
+        "LastName": null,
+        "FirstName": null,
+        "Title": null,
+        "ReportsTo": null,
+        "BirthDate": null,
+        "HireDate": null,
+        "Address": null,
+        "City": null,
+        "State": null,
+        "Country": null,
+        "PostalCode": null,
+        "Phone": null,
+        "Fax": null,
+        "Email": null
+      }
+    },
+    "genre": {
+      "primary_key": [
+        "GenreId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "GenreId": "identifier",
+        "Name": "text"
+      },
+      "units": {
+        "GenreId": null,
+        "Name": null
+      }
+    },
+    "invoice": {
+      "primary_key": [
+        "InvoiceId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "InvoiceId": "identifier",
+        "CustomerId": "identifier",
+        "InvoiceDate": "time",
+        "BillingAddress": "text",
+        "BillingCity": "text",
+        "BillingState": "dimension",
+        "BillingCountry": "dimension",
+        "BillingPostalCode": "text",
+        "Total": "measure"
+      },
+      "units": {
+        "InvoiceId": null,
+        "CustomerId": null,
+        "InvoiceDate": null,
+        "BillingAddress": null,
+        "BillingCity": null,
+        "BillingState": null,
+        "BillingCountry": null,
+        "BillingPostalCode": null,
+        "Total": null
+      }
+    },
+    "invoiceline": {
+      "primary_key": [
+        "InvoiceLineId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "InvoiceLineId": "identifier",
+        "InvoiceId": "identifier",
+        "TrackId": "identifier",
+        "UnitPrice": "measure",
+        "Quantity": "measure"
+      },
+      "units": {
+        "InvoiceLineId": null,
+        "InvoiceId": null,
+        "TrackId": null,
+        "UnitPrice": null,
+        "Quantity": null
+      }
+    },
+    "mediatype": {
+      "primary_key": [
+        "MediaTypeId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "MediaTypeId": "identifier",
+        "Name": "text"
+      },
+      "units": {
+        "MediaTypeId": null,
+        "Name": null
+      }
+    },
+    "playlist": {
+      "primary_key": [
+        "PlaylistId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "PlaylistId": "identifier",
+        "Name": "text"
+      },
+      "units": {
+        "PlaylistId": null,
+        "Name": null
+      }
+    },
+    "playlisttrack": {
+      "primary_key": [
+        "PlaylistId",
+        "TrackId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "PlaylistId": "identifier",
+        "TrackId": "identifier"
+      },
+      "units": {
+        "PlaylistId": null,
+        "TrackId": null
+      }
+    },
+    "track": {
+      "primary_key": [
+        "TrackId"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "TrackId": "identifier",
+        "Name": "text",
+        "AlbumId": "identifier",
+        "MediaTypeId": "identifier",
+        "GenreId": "identifier",
+        "Composer": "text",
+        "Milliseconds": "measure",
+        "Bytes": "measure",
+        "UnitPrice": "measure"
+      },
+      "units": {
+        "TrackId": null,
+        "Name": null,
+        "AlbumId": null,
+        "MediaTypeId": null,
+        "GenreId": null,
+        "Composer": null,
+        "Milliseconds": null,
+        "Bytes": null,
+        "UnitPrice": null
+      }
+    }
+  },
+  "relationships": [
+    {
+      "from": "album.ArtistId",
+      "to": "artist.ArtistId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "invoice.CustomerId",
+      "to": "customer.CustomerId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "invoiceline.InvoiceId",
+      "to": "invoice.InvoiceId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "invoiceline.TrackId",
+      "to": "track.TrackId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "playlisttrack.PlaylistId",
+      "to": "playlist.PlaylistId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "playlisttrack.TrackId",
+      "to": "track.TrackId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "track.AlbumId",
+      "to": "album.AlbumId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "track.GenreId",
+      "to": "genre.GenreId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "track.MediaTypeId",
+      "to": "mediatype.MediaTypeId",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    }
+  ],
+  "semantic_model": null,
+  "analysis": {
+    "llm_enabled": false,
+    "model": null,
+    "reasoning_effort": null,
+    "degraded": false,
+    "notes": [],
+    "llm_calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "timings_s": {
+      "load_and_statistics": 0.47,
+      "understanding": 0.01,
+      "candidates": 0.6,
+      "relationship_review": 0.01,
+      "semantic_model": 0.0
+    }
+  }
+}

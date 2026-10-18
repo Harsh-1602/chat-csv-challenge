@@ -1,0 +1,210 @@
+{
+  "tables": {
+    "album": {
+      "primary_key": [
+        "AlbumId"
+      ],
+      "roles": {
+        "AlbumId": "identifier",
+        "Title": "descriptive",
+        "ArtistId": "identifier"
+      },
+      "units": {}
+    },
+    "artist": {
+      "primary_key": [
+        "ArtistId"
+      ],
+      "roles": {
+        "ArtistId": "identifier",
+        "Name": "descriptive"
+      },
+      "units": {}
+    },
+    "customer": {
+      "primary_key": [
+        "CustomerId"
+      ],
+      "roles": {
+        "CustomerId": "identifier",
+        "FirstName": "descriptive",
+        "LastName": "descriptive",
+        "Company": "descriptive",
+        "Address": "descriptive",
+        "City": "descriptive",
+        "State": "descriptive",
+        "Country": "descriptive",
+        "PostalCode": "descriptive",
+        "Phone": "descriptive",
+        "Fax": "descriptive",
+        "Email": "descriptive",
+        "SupportRepId": "identifier"
+      },
+      "units": {}
+    },
+    "employee": {
+      "primary_key": [
+        "EmployeeId"
+      ],
+      "roles": {
+        "EmployeeId": "identifier",
+        "LastName": "descriptive",
+        "FirstName": "descriptive",
+        "Title": "descriptive",
+        "ReportsTo": "measure",
+        "BirthDate": "time",
+        "HireDate": "time",
+        "Address": "descriptive",
+        "City": "descriptive",
+        "State": "descriptive",
+        "Country": "descriptive",
+        "PostalCode": "descriptive",
+        "Phone": "descriptive",
+        "Fax": "descriptive",
+        "Email": "descriptive"
+      },
+      "units": {}
+    },
+    "genre": {
+      "primary_key": [
+        "GenreId"
+      ],
+      "roles": {
+        "GenreId": "identifier",
+        "Name": "descriptive"
+      },
+      "units": {}
+    },
+    "invoice": {
+      "primary_key": [
+        "InvoiceId"
+      ],
+      "roles": {
+        "InvoiceId": "identifier",
+        "CustomerId": "identifier",
+        "InvoiceDate": "time",
+        "BillingAddress": "descriptive",
+        "BillingCity": "descriptive",
+        "BillingState": "descriptive",
+        "BillingCountry": "descriptive",
+        "BillingPostalCode": "descriptive",
+        "Total": "measure"
+      },
+      "units": {}
+    },
+    "invoiceline": {
+      "primary_key": [
+        "InvoiceLineId"
+      ],
+      "roles": {
+        "InvoiceLineId": "identifier",
+        "InvoiceId": "identifier",
+        "TrackId": "identifier",
+        "UnitPrice": "measure",
+        "Quantity": "measure"
+      },
+      "units": {}
+    },
+    "mediatype": {
+      "primary_key": [
+        "MediaTypeId"
+      ],
+      "roles": {
+        "MediaTypeId": "identifier",
+        "Name": "descriptive"
+      },
+      "units": {}
+    },
+    "playlist": {
+      "primary_key": [
+        "PlaylistId"
+      ],
+      "roles": {
+        "PlaylistId": "identifier",
+        "Name": "descriptive"
+      },
+      "units": {}
+    },
+    "playlisttrack": {
+      "primary_key": null,
+      "roles": {
+        "PlaylistId": "identifier",
+        "TrackId": "identifier"
+      },
+      "units": {}
+    },
+    "track": {
+      "primary_key": [
+        "TrackId"
+      ],
+      "roles": {
+        "TrackId": "identifier",
+        "Name": "descriptive",
+        "AlbumId": "identifier",
+        "MediaTypeId": "identifier",
+        "GenreId": "identifier",
+        "Composer": "descriptive",
+        "Milliseconds": "measure",
+        "Bytes": "measure",
+        "UnitPrice": "measure"
+      },
+      "units": {}
+    }
+  },
+  "relationships": [
+    {
+      "from": "track.AlbumId",
+      "to": "album.AlbumId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "album.ArtistId",
+      "to": "artist.ArtistId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "invoice.CustomerId",
+      "to": "customer.CustomerId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "track.GenreId",
+      "to": "genre.GenreId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "invoiceline.InvoiceId",
+      "to": "invoice.InvoiceId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "track.MediaTypeId",
+      "to": "mediatype.MediaTypeId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "playlisttrack.PlaylistId",
+      "to": "playlist.PlaylistId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "invoiceline.TrackId",
+      "to": "track.TrackId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    },
+    {
+      "from": "playlisttrack.TrackId",
+      "to": "track.TrackId",
+      "cardinality": "many-to-one",
+      "status": "accepted"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "tables": {
+    "raw_customers": {
+      "primary_key": [
+        "id"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "id": "identifier",
+        "first_name": "text",
+        "last_name": "dimension"
+      },
+      "units": {
+        "id": null,
+        "first_name": null,
+        "last_name": null
+      }
+    },
+    "raw_orders": {
+      "primary_key": [
+        "id"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "id": "identifier",
+        "user_id": "identifier",
+        "order_date": "time",
+        "status": "dimension"
+      },
+      "units": {
+        "id": null,
+        "user_id": null,
+        "order_date": null,
+        "status": null
+      }
+    },
+    "raw_payments": {
+      "primary_key": [
+        "id"
+      ],
+      "primary_key_source": "sql_fallback",
+      "roles": {
+        "id": "identifier",
+        "order_id": "identifier",
+        "payment_method": "dimension",
+        "amount": "measure"
+      },
+      "units": {
+        "id": null,
+        "order_id": null,
+        "payment_method": null,
+        "amount": null
+      }
+    }
+  },
+  "relationships": [
+    {
+      "from": "raw_orders.user_id",
+      "to": "raw_customers.id",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    },
+    {
+      "from": "raw_payments.order_id",
+      "to": "raw_orders.id",
+      "status": "accepted",
+      "source": "candidate",
+      "reason": "Column name matches the parent key and all values exist in it."
+    }
+  ],
+  "semantic_model": null,
+  "analysis": {
+    "llm_enabled": false,
+    "model": null,
+    "reasoning_effort": null,
+    "degraded": false,
+    "notes": [],
+    "llm_calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "timings_s": {
+      "load_and_statistics": 0.11,
+      "understanding": 0.0,
+      "candidates": 0.14,
+      "relationship_review": 0.0,
+      "semantic_model": 0.0
+    }
+  }
+}

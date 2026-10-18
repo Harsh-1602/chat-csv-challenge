@@ -1,0 +1,129 @@
+{
+  "experiment": "exp01_llm_assisted",
+  "datasets": {
+    "jaffle_shop": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 2,
+        "accepted": 2,
+        "expected": 2,
+        "false_positives": [],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 3,
+        "total": 3,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 11,
+        "total": 11,
+        "errors": []
+      },
+      "units": {
+        "hits": 1,
+        "total": 1,
+        "errors": []
+      },
+      "latency_s": 14.98,
+      "llm": {
+        "calls": 5,
+        "prompt_tokens": 6314,
+        "completion_tokens": 1705,
+        "cached_calls": 0
+      }
+    },
+    "chinook": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 11,
+        "accepted": 11,
+        "expected": 11,
+        "false_positives": [],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 11,
+        "total": 11,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 64,
+        "total": 64,
+        "errors": []
+      },
+      "units": {
+        "hits": 0,
+        "total": 0,
+        "errors": []
+      },
+      "latency_s": 25.41,
+      "llm": {
+        "calls": 13,
+        "prompt_tokens": 29831,
+        "completion_tokens": 5439,
+        "cached_calls": 0
+      }
+    },
+    "tpch": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 9,
+        "accepted": 9,
+        "expected": 9,
+        "false_positives": [],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 8,
+        "total": 8,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 58,
+        "total": 58,
+        "errors": []
+      },
+      "units": {
+        "hits": 0,
+        "total": 0,
+        "errors": []
+      },
+      "latency_s": 22.65,
+      "llm": {
+        "calls": 10,
+        "prompt_tokens": 24870,
+        "completion_tokens": 4866,
+        "cached_calls": 0
+      }
+    }
+  },
+  "llm_usage": {
+    "model": "gpt-5.6-terra",
+    "reasoning_effort": "medium",
+    "calls": 28,
+    "cached_calls": 0,
+    "failed_calls": 0,
+    "prompt_tokens": 61015,
+    "completion_tokens": 12010,
+    "est_cost_usd": 0.26615
+  }
+}

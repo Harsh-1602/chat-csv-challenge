@@ -1,0 +1,142 @@
+{
+  "experiment": "exp01_llm_assisted",
+  "datasets": {
+    "jaffle_shop": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 2,
+        "accepted": 2,
+        "expected": 2,
+        "false_positives": [],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 3,
+        "total": 3,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 11,
+        "total": 11,
+        "errors": []
+      },
+      "units": {
+        "hits": 0,
+        "total": 1,
+        "errors": [
+          {
+            "column": "raw_payments.amount",
+            "expected": "cents",
+            "got": "currency units"
+          }
+        ]
+      },
+      "latency_s": 10.88,
+      "llm": {
+        "calls": 5,
+        "prompt_tokens": 6288,
+        "completion_tokens": 1503,
+        "cached_calls": 0
+      }
+    },
+    "chinook": {
+      "relationships": {
+        "precision": 0.917,
+        "recall": 1.0,
+        "f1": 0.957,
+        "true_positives": 11,
+        "accepted": 12,
+        "expected": 11,
+        "false_positives": [
+          "track.trackid->track.trackid"
+        ],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 11,
+        "total": 11,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 0.984,
+        "hits": 63,
+        "total": 64,
+        "errors": [
+          {
+            "column": "customer.Email",
+            "expected": "descriptive",
+            "got": "identifier"
+          }
+        ]
+      },
+      "units": {
+        "hits": 0,
+        "total": 0,
+        "errors": []
+      },
+      "latency_s": 31.96,
+      "llm": {
+        "calls": 13,
+        "prompt_tokens": 29840,
+        "completion_tokens": 5820,
+        "cached_calls": 0
+      }
+    },
+    "tpch": {
+      "relationships": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 9,
+        "accepted": 9,
+        "expected": 9,
+        "false_positives": [],
+        "missed": [],
+        "missed_but_in_review": [],
+        "needs_review": 0
+      },
+      "primary_keys": {
+        "accuracy": 1.0,
+        "hits": 8,
+        "total": 8,
+        "errors": []
+      },
+      "roles": {
+        "accuracy": 1.0,
+        "hits": 58,
+        "total": 58,
+        "errors": []
+      },
+      "units": {
+        "hits": 0,
+        "total": 0,
+        "errors": []
+      },
+      "latency_s": 19.43,
+      "llm": {
+        "calls": 10,
+        "prompt_tokens": 24866,
+        "completion_tokens": 4335,
+        "cached_calls": 0
+      }
+    }
+  },
+  "llm_usage": {
+    "model": "gpt-4.1-mini",
+    "calls": 28,
+    "cached_calls": 0,
+    "failed_calls": 0,
+    "prompt_tokens": 60994,
+    "completion_tokens": 11658,
+    "est_cost_usd": 0.04305
+  }
+}
