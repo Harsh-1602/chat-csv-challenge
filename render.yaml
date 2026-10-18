@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: csv-chat-analyst
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: LLM_ENABLED
+        value: "true"
+      - key: MAX_FILES
+        value: "5"
+      - key: MAX_FILE_SIZE_MB
+        value: "10"

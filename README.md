@@ -65,6 +65,16 @@ npm run dev
 
 Then open http://localhost:5173 and upload the files in `data/`.
 
+## Free demo deployment
+
+The Render Blueprint builds the React frontend into the Docker image and serves it from the FastAPI app, so the demo uses one URL and one service:
+
+1. In Render, create a **Blueprint** from this GitHub repository and deploy `render.yaml`.
+2. When prompted, provide `OPENAI_API_KEY` if you want AI-assisted profiling and chat. Keep the key in Render's environment settings; never commit it.
+3. Open the deployed service URL. Check `/api/health` for `{"status":"ok"}`.
+
+This is a public demo without authentication: anyone with the URL can upload files and access sessions. Do not upload sensitive data. The free service has an ephemeral filesystem, so uploads, DuckDB files, and session history can disappear when it sleeps, restarts, or redeploys. The Blueprint limits uploads to 5 CSV files of at most 10 MB each to fit a small demo instance. The LLM provider may charge separately for API usage.
+
 ### Configuration (backend environment variables)
 
 | Variable | Default | Meaning |

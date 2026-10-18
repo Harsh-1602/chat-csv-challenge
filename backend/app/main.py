@@ -7,6 +7,7 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Request, Res
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
 from .chat.executor import QueryError
 from .chat.factory import ChatAgentFactory
@@ -232,6 +233,10 @@ def create_app(
         return Response(content, media_type="text/csv", headers={
             "Content-Disposition": f'attachment; filename="result-{message_id[:8]}.csv"',
         })
+
+    frontend_dist = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+    if frontend_dist.is_dir():
+        app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 
     return app
 
