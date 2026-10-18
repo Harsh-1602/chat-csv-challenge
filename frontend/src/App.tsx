@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { copySession, getSession, sessionStatusUrl } from "./api";
 import ChatView from "./components/ChatView";
+import LandingView from "./components/LandingView";
 import ProcessingView from "./components/ProcessingView";
 import UploadView from "./components/UploadView";
 import type { SessionStatus } from "./types";
 
 type Screen =
+  | { name: "landing" }
   | { name: "upload" }
   | { name: "loading"; sessionId: string }
   | { name: "processing"; files?: File[]; sessionId?: string }
@@ -19,14 +21,15 @@ function sessionFromUrl(): string | null {
 
 /** Keeps the open session in the URL so reloads, bookmarks and back/forward restore it. */
 function setUrl(sessionId: string | null, replace = false) {
-  const url = sessionId ? `#/session/${sessionId}` : window.location.pathname + window.location.search;
+  const url = sessionId ? `#/session/${sessionId}` : "#/app";
   if (replace) window.history.replaceState(null, "", url);
   else window.history.pushState(null, "", url);
 }
 
 function screenFromUrl(): Screen {
   const id = sessionFromUrl();
-  return id ? { name: "loading", sessionId: id } : { name: "upload" };
+  if (id) return { name: "loading", sessionId: id };
+  return window.location.hash === "#/app" ? { name: "upload" } : { name: "landing" };
 }
 
 export default function App() {
@@ -88,6 +91,14 @@ export default function App() {
 
   return (
     <div className="app">
+      {screen.name === "landing" && (
+        <LandingView
+          onStart={() => {
+            setUrl(null);
+            setScreen({ name: "upload" });
+          }}
+        />
+      )}
       {screen.name === "upload" && (
         <UploadView
           files={selected}
