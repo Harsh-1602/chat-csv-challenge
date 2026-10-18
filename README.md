@@ -73,7 +73,7 @@ The Render Blueprint builds the React frontend into the Docker image and serves 
 2. When prompted, provide `OPENAI_API_KEY` if you want AI-assisted profiling and chat. Keep the key in Render's environment settings; never commit it.
 3. Open the deployed service URL. Check `/api/health` for `{"status":"ok"}`.
 
-This is a public demo without authentication: anyone with the URL can upload files and access sessions. Do not upload sensitive data. The free service has an ephemeral filesystem, so uploads, DuckDB files, and session history can disappear when it sleeps, restarts, or redeploys. The Blueprint limits uploads to 5 CSV files of at most 10 MB each to fit a small demo instance. The LLM provider may charge separately for API usage.
+This is a public demo without authentication: anyone with the URL can upload files and access sessions. Do not upload sensitive data. The free service has an ephemeral filesystem, so uploads, DuckDB files, and session history can disappear when it sleeps, restarts, or redeploys. The Blueprint limits uploads to 10 CSV files of at most 10 MB each to fit a small demo instance. The LLM provider may charge separately for API usage.
 
 ### Configuration (backend environment variables)
 
